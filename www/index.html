@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="angulargap">
+<html ng-app="seagrass">
     <head>
         <meta charset="utf-8" />
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,7 +11,7 @@
 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript" src="angular.js"></script>
+        <script type="text/javascript" src="lib/angular.js"></script>
         <script type="text/javascript" src="js/app.js"></script>
         <script src="lib/onsen/js/onsenui.js"></script>
         <script>
@@ -19,19 +19,19 @@
           });
         </script>
     </head>
-    <body>
+    <body ng-controller="MembersController as members">
         <ons-navigator>
           <ons-page style="background-color: #f9f9f9">
             <ons-toolbar>
               <div class="center">Members</div>
            </ons-toolbar>
 
-           <ons-list>
-           <ons-list-item modifier="chevron">
-             <ons-row>
-               <ons-col class="left">Out of battery : 5</ons-col>
-             </ons-row>                          
-           </ons-list-item>
+           <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0">
+               <ons-list-item modifier="chevron">
+                 <ons-row>
+                   <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
+                 </ons-row>
+               </ons-list-item>
            </ons-list>
          </ons-page>
         </ons-navigator>
