@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html ng-app="angulargap">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+        
+        <link rel="stylesheet" href="lib/onsen/css/onsenui.css">
+        <link rel="stylesheet" href="lib/onsen/css/onsen-css-components.css">
+        <title>SeaGrass</title>
+
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="angular.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script src="lib/onsen/js/onsenui.js"></script>
+        <script>
+          ons.ready(function() {
+          });
+        </script>
+    </head>
+    <body>
+        <ons-navigator>
+          <ons-page style="background-color: #f9f9f9">
+            <ons-toolbar>
+              <div class="center">Members</div>
+           </ons-toolbar>
+
+           <ons-list>
+           <ons-list-item modifier="chevron">
+             <ons-row>
+               <ons-col class="left">Out of battery : 5</ons-col>
+             </ons-row>                          
+           </ons-list-item>
+           </ons-list>
+         </ons-page>
+        </ons-navigator>
+   </body>
+</html>
