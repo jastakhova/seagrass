@@ -39,16 +39,40 @@
                     </div>
                 </div>
 
-                <div class="panel" ng-show="metrics.isSelected(1)">
-                <div ng-controller="MembersController as members">
-                    <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0">
-                        <ons-list-item modifier="chevron">
-                            <ons-row>
-                                <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
-                            </ons-row>
-                        </ons-list-item>
-                    </ons-list>
-                </div>
+                <div class="panel" ng-show="metrics.isSelected(1)" style="margin:8px">
+                    <div ng-controller="MembersController as members">
+                        <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0" style="vertical-margin: 8px">
+                            <ons-list-item modifier="chevron">
+                                <ons-row>
+                                    <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
+                                </ons-row>
+                            </ons-list-item>
+                        </ons-list>
+
+                        <!--<ons-list ng-repeat="member in members.members">-->
+                            <!--<ons-list-item>-->
+                                <!--<ons-row><strong>{{member.name}}</strong></ons-row>-->
+
+                                <!--<div>Pattern: {{member.pattern}}</div>-->
+                                <!--<div>Battery: {{member.battery | number : 1}}</div>-->
+                                <!--<div>Latitude: {{member.lat}}</div>-->
+                                <!--<div>Longitude: {{member.lon}}</div>-->
+                            <!--</ons-list-item>-->
+                        <!--</ons-list>-->
+
+                        <div style="font-size: 12px">
+                           <strong style="margin:8px"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
+                            <div ng-repeat="member in members.members">
+                                <ons-row>
+                                    <ons-col><strong>{{member.name}}</strong></ons-col>
+                                    <ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>
+                                    <ons-col>{{member.battery | number : 1}}</ons-col>
+                                    <ons-col>{{member.lat}}</ons-col>
+                                    <ons-col>{{member.lon}}</ons-col>
+                                </ons-row>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="panel" ng-show="metrics.isSelected(2)">
