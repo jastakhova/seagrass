@@ -19,21 +19,38 @@
           });
         </script>
     </head>
-    <body ng-controller="MembersController as members">
-        <ons-navigator>
-          <ons-page style="background-color: #f9f9f9">
-            <ons-toolbar>
-              <div class="center">Members</div>
-           </ons-toolbar>
+    <body>
+        <ons-tabbar>
+            <ons-tabbar-item page="metrics.html" label="Metrics" icon="tags" active="true"></ons-tabbar-item>
+            <ons-tabbar-item page="control.html" label="Control" icon="gear"></ons-tabbar-item>
+        </ons-tabbar>
 
-           <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0">
-               <ons-list-item modifier="chevron">
-                 <ons-row>
-                   <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
-                 </ons-row>
-               </ons-list-item>
-           </ons-list>
-         </ons-page>
-        </ons-navigator>
+        <script type="text/ons-template" id="metrics.html">
+            <div ng-controller="MembersController as members">
+                <ons-navigator>
+                    <ons-page style="background-color: #f9f9f9">
+                        <ons-toolbar>
+                            <div class="center">Members</div>
+                        </ons-toolbar>
+
+                        <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0">
+                            <ons-list-item modifier="chevron">
+                                <ons-row>
+                                    <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
+                                </ons-row>
+                            </ons-list-item>
+                        </ons-list>
+                    </ons-page>
+                </ons-navigator>
+            </div>
+        </script>
+
+        <script type="text/ons-template" id="control.html">
+            <ons-toolbar>
+                <div class="center">Comments</div>
+            </ons-toolbar>
+
+            <p style="padding-top: 100px; color: #999; text-align: center">Page Contents</p>
+        </script>
    </body>
 </html>
