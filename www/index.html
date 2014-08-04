@@ -11,6 +11,7 @@
 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="lib/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="lib/angular.js"></script>
         <script type="text/javascript" src="js/app.js"></script>
         <script src="lib/onsen/js/onsenui.js"></script>
@@ -49,18 +50,7 @@
                             </ons-list-item>
                         </ons-list>
 
-                        <!--<ons-list ng-repeat="member in members.members">-->
-                            <!--<ons-list-item>-->
-                                <!--<ons-row><strong>{{member.name}}</strong></ons-row>-->
-
-                                <!--<div>Pattern: {{member.pattern}}</div>-->
-                                <!--<div>Battery: {{member.battery | number : 1}}</div>-->
-                                <!--<div>Latitude: {{member.lat}}</div>-->
-                                <!--<div>Longitude: {{member.lon}}</div>-->
-                            <!--</ons-list-item>-->
-                        <!--</ons-list>-->
-
-                        <div style="font-size: 12px">
+                        <div style="font-size: 12px" ng-show="members.members.length > 0">
                            <strong style="margin:8px"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
                             <div ng-repeat="member in members.members">
                                 <ons-row>
@@ -75,10 +65,42 @@
                     </div>
                 </div>
 
-                <div class="panel" ng-show="metrics.isSelected(2)">
+                <div class="panel" ng-show="metrics.isSelected(2)" style="margin:8px">
+                    <div ng-controller="SensorsController as sensors">
+                        <div style="font-size: 12px" ng-show="sensors.sensors.length > 0">
+                            <strong style="margin:8px"><ons-row><ons-col></ons-col>
+                                <ons-col>Threshold</ons-col>
+                                <ons-col>Filter length</ons-col>
+                            </ons-row></strong>
+                            <div ng-repeat="sensor in sensors.sensors">
+                                <ons-row>
+                                    <ons-col><strong>{{sensor.name}}</strong></ons-col>
+                                    <ons-col><div style="text-align: center">{{sensor.threshold}}</div></ons-col>
+                                    <ons-col>{{sensor.filterLength}}</ons-col>
+                                </ons-row>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="panel" ng-show="metrics.isSelected(3)">
+                <div class="panel" ng-show="metrics.isSelected(3)" style="margin:8px">
+                    <div ng-controller="ComputerController as computer">
+                        <div style="font-size: 12px" ng-show="computer.entries.length > 0">
+                            <strong style="margin:8px"><ons-row><ons-col></ons-col>
+                                <ons-col>CPU</ons-col>
+                                <ons-col>Battery</ons-col>
+                                <ons-col>Memory</ons-col>
+                            </ons-row></strong>
+                            <div ng-repeat="entry in computer.entries">
+                                <ons-row>
+                                    <ons-col><strong>{{entry.time}}</strong></ons-col>
+                                    <ons-col><div style="text-align: center">{{entry.cpu}}</div></ons-col>
+                                    <ons-col>{{entry.battery}}</ons-col>
+                                    <ons-col>{{entry.memory}}</ons-col>
+                                </ons-row>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </ons-page>
         </script>
