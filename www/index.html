@@ -26,23 +26,37 @@
         </ons-tabbar>
 
         <script type="text/ons-template" id="metrics.html">
-            <div ng-controller="MembersController as members">
-                <ons-navigator>
-                    <ons-page style="background-color: #f9f9f9">
-                        <ons-toolbar>
-                            <div class="center">Members</div>
-                        </ons-toolbar>
+            <ons-page style="background-color: #f9f9f9" ng-controller="MetricsController as metrics">
+                <div class="button-bar width-full" style="width: 300px; margin: 0 auto; background-color: white; margin: 8px">
+                    <div class="button-bar__item" ng-class="{ active: metrics.isSelected(1)}">
+                        <button class="button-bar__button" ng-click="metrics.chooseTab(1)">Members</button>
+                    </div>
+                    <div class="button-bar__item" ng-class="{ active: metrics.isSelected(2)}">
+                        <button class="button-bar__button" ng-click="metrics.chooseTab(2)">Sensors</button>
+                    </div>
+                    <div class="button-bar__item" ng-class="{ active: metrics.isSelected(3)}">
+                        <button class="button-bar__button" ng-click="metrics.chooseTab(3)">Main computer</button>
+                    </div>
+                </div>
 
-                        <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0">
-                            <ons-list-item modifier="chevron">
-                                <ons-row>
-                                    <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
-                                </ons-row>
-                            </ons-list-item>
-                        </ons-list>
-                    </ons-page>
-                </ons-navigator>
-            </div>
+                <div class="panel" ng-show="metrics.isSelected(1)">
+                <div ng-controller="MembersController as members">
+                    <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0">
+                        <ons-list-item modifier="chevron">
+                            <ons-row>
+                                <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
+                            </ons-row>
+                        </ons-list-item>
+                    </ons-list>
+                </div>
+                </div>
+
+                <div class="panel" ng-show="metrics.isSelected(2)">
+                </div>
+
+                <div class="panel" ng-show="metrics.isSelected(3)">
+                </div>
+            </ons-page>
         </script>
 
         <script type="text/ons-template" id="control.html">
