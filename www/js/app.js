@@ -2,6 +2,16 @@ var backend = "http://thawing-hamlet-4746.herokuapp.com";
 var patternRange = 30;
 var batteryThreshold = 7;
 
+var defaultPattern = 0;
+
+var speedMin = 1;
+var speedMax = 10;
+var speedDefault = 5;
+
+var intensityMin = 1;
+var intensityMax = 5;
+var intensityDefault = 2;
+
 (function() {
     var seagrass = angular.module("seagrass", ['onsen']).
         service('History', function($http, $q, $log) {
@@ -15,11 +25,7 @@ var batteryThreshold = 7;
 
                 return deferred.promise;
             }
-        }).
-        service('Pattern', function($http, $log) {
-          this.chosen_pattern = 0;
-        }
-    );
+        });
 
     seagrass.controller("MetricsController", [function () {
         this.activeTab = 1;
@@ -98,12 +104,21 @@ var batteryThreshold = 7;
     }]);
 
     seagrass.controller("PatternController", ['$scope', '$http', '$log', function ($scope, $http, $log) {
-        $scope.patterns = [1, 2, 3 ]; //Array.apply(null, Array(patternRange)).map(function (_, i) {return i;});
+        $scope.patterns = Array.apply(null, Array(patternRange)).map(function (_, i) {return i;});
 
-        $scope.chosen_pattern = 1;
+        $scope.chosen_pattern = defaultPattern;
 
-        $log.info(Object.keys($scope.$parent));
+        $scope.speed = speedDefault;
+        $scope.speedMin = speedMin;
+        $scope.speedMax = speedMax;
 
+        $scope.intensity = intensityDefault;
+        $scope.intensityMin = intensityMin;
+        $scope.intensityMax = intensityMax;
+
+        $scope.red = 0;
+        $scope.green = 0;
+        $scope.blue = 0;
     }]);
 }());
 

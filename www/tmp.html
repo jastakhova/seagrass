@@ -1,0 +1,32 @@
+            <html ng-app="myApp">
+            <head>
+                <link rel="stylesheet" href="lib/onsen/css/onsenui.css">
+                <link rel="stylesheet" href="lib/onsen/css/onsen-css-components.css">
+
+                <script type="text/javascript" src="lib/onsen/js/angular/angular.js"></script>
+                <script type="text/javascript" src="lib/onsen/js/onsenui.js"></script>
+
+                <script>
+                    (function() {
+                        var myApp = angular.module("myApp", ['onsen']);
+
+                        myApp.controller("MyController", ['$scope', '$http', function ($scope, $http) {
+                            $scope.param = 1;
+
+                            //$http.get('http://bit.ly');
+                        }]);
+                    })();
+                </script>
+            </head>
+            <body>
+              <ons-navigator title="Navigator" var="myNavigator">
+                <button ng-click="myNavigator.pushPage('my.html', { animation : 'slide' } )">Click me</button>
+              </ons-navigator>
+
+                <script type="text/ons-template" id="my.html">
+                    <div ng-controller="MyController">
+                            {{param}}
+                    </div>
+                </script>
+            </body>
+            </html>
