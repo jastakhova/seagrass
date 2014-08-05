@@ -26,9 +26,10 @@ var intensityDefault = 2;
                 return deferred.promise;
             }
         }).
-        service('Sensor', function($http, $log) {
+        service('CachedService', function($http, $log) {
             this.sensor = "";
             this.sensors = [];
+            this.members = [];
 
             this.get = function() {
                 return this.sensor;
@@ -48,8 +49,23 @@ var intensityDefault = 2;
                 } else {
                     callback(data.collection);
                 }
-
             }
+
+            this.getMembers = function(callback) {
+                if (this.members.length == 0)
+                {
+                    $http.get(backend + '/members').success(function(data) {
+                        callback(data.collection);
+                        this.members = data.collection;
+                    });
+                } else {
+                    callback(data.collection);
+                }
+            }
+
+            this.batteryFilter = function (member) {
+                return member.battery < batteryThreshold;
+            };
         });
 
     seagrass.controller("MetricsController", [function () {
@@ -64,26 +80,22 @@ var intensityDefault = 2;
         };
     }]);
 
-    seagrass.controller("MembersController", ['$http', '$log', function ($http, $log) {
-        var home = this;
+    seagrass.controller("MembersController", ['$scope', '$http', '$log', 'CachedService', function ($scope, $http, $log, CachedService) {
+        $scope.batteryFilter = CachedService.batteryFilter;
 
-        this.batteryFilter = function (member) {
-            return member.battery < batteryThreshold;
-        };
+        $scope.members = [];
 
-        home.members = [];
-
-        $http.get(backend + '/members').success(function(data) {
-           home.members = data.collection;
+        CachedService.getMembers(function(data) {
+            $scope.members = data;
         });
     }]);
 
-    seagrass.controller("SensorsController", ['$http', '$log', 'Sensor', function ($http, $log, Sensor) {
+    seagrass.controller("SensorsController", ['$http', '$log', 'CachedService', function ($http, $log, CachedService) {
         var home = this;
 
         home.sensors = [];
 
-        Sensor.getSensors(function(data) {
+        CachedService.getSensors(function(data) {
             home.sensors = data;
         });
     }]);
@@ -112,7 +124,7 @@ var intensityDefault = 2;
         });
     }]);
 
-    seagrass.controller("ControlController", ['$scope', '$http', '$log', 'Sensor', function ($scope, $http, $log, Sensor) {
+    seagrass.controller("ControlController", ['$scope', '$http', '$log', 'CachedService', function ($scope, $http, $log, CachedService) {
         $scope.startup = function() {
           $http.post(backend + '/startup');
         };
@@ -125,11 +137,11 @@ var intensityDefault = 2;
             $http.post(backend + '/shutdown');
         };
 
-        $scope.chosen_sensor = Sensor.get();
+        $scope.chosen_sensor = CachedService.get();
 
         $scope.sensors = [];
 
-        Sensor.getSensors(function(data) {
+        CachedService.getSensors(function(data) {
             $scope.sensors = data.map(function(sensor) {
                 return sensor.name;
             });
@@ -138,7 +150,7 @@ var intensityDefault = 2;
         $scope.chooseSensor = function(navigator, page) {
             if ($scope.chosen_sensor != "")
             {
-                Sensor.set($scope.chosen_sensor);
+                CachedService.set($scope.chosen_sensor);
                 navigator.pushPage(page, { animation : 'slide' } );
             }
         };
@@ -167,8 +179,8 @@ var intensityDefault = 2;
         };
     }]);
 
-    seagrass.controller("ChosenSensorController", ['$scope', '$http', '$log', 'Sensor', function ($scope, $http, $log, Sensor) {
-        $scope.chosen_sensor = Sensor.get();
+    seagrass.controller("ChosenSensorController", ['$scope', '$http', '$log', 'CachedService', function ($scope, $http, $log, CachedService) {
+        $scope.chosen_sensor = CachedService.get();
 
         $scope.filterLength = 0;
         $scope.threshold = 0;
@@ -178,7 +190,7 @@ var intensityDefault = 2;
             $http.post(backend + '/sensor/' + $scope.chosen_sensor + '?filterLength=' + $scope.filterLength);
         };
 
-        Sensor.getSensors(function(data) {
+        CachedService.getSensors(function(data) {
            data.map(function(sensor) {
               if (sensor.name === $scope.chosen_sensor)
               {
@@ -188,6 +200,14 @@ var intensityDefault = 2;
 
               return sensor;
            })
+        });
+    }]);
+
+    seagrass.controller("OutOfBatteryController", ['$scope', 'CachedService', function ($scope, CachedService) {
+        $scope.outOfBattery = [];
+
+        CachedService.getMembers(function(data) {
+            $scope.outOfBattery = data.filter(CachedService.batteryFilter);
         });
     }]);
 }());

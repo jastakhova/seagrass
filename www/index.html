@@ -24,8 +24,9 @@
         </ons-tabbar>
 
         <script type="text/ons-template" id="metrics.html">
+            <ons-navigator title="Navigator" var="membersNavigator">
             <ons-page style="background-color: #f9f9f9" ng-controller="MetricsController as metrics">
-                <div class="button-bar width-full" style="width: 300px; margin: 0 auto; background-color: white; margin: 8px">
+                <div class="button-bar width-full margined" style="width: 300px; margin: 0 auto; background-color: white">
                     <div class="button-bar__item" ng-class="{ active: metrics.isSelected(1)}">
                         <button class="button-bar__button" ng-click="metrics.chooseTab(1)">Members</button>
                     </div>
@@ -38,18 +39,18 @@
                 </div>
 
                 <div class="panel margined" ng-show="metrics.isSelected(1)">
-                    <div ng-controller="MembersController as members">
-                        <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0" class="vertically-margined">
-                            <ons-list-item modifier="chevron">
+                    <div ng-controller="MembersController">
+                        <ons-list ng-show="(members | filter:batteryFilter).length > 0" class="vertically-margined">
+                            <ons-list-item modifier="chevron" ng-click="membersNavigator.pushPage('outOfBattery.html', { animation : 'slide' } )">
                                 <ons-row>
                                     <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
                                 </ons-row>
                             </ons-list-item>
                         </ons-list>
 
-                        <div style="font-size: 12px" ng-show="members.members.length > 0">
+                        <div style="font-size: 12px" ng-show="members.length > 0">
                            <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
-                            <div ng-repeat="member in members.members">
+                            <div ng-repeat="member in members">
                                 <ons-row>
                                     <ons-col><strong>{{member.name}}</strong></ons-col>
                                     <ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>
@@ -100,6 +101,7 @@
                     </div>
                 </div>
             </ons-page>
+            </ons-navigator>
         </script>
 
         <script type="text/ons-template" id="control.html">
@@ -166,7 +168,7 @@
             <div ng-controller="ChosenSensorController">
             <ons-toolbar>
                 <div class="left"><ons-back-button>Back</ons-back-button></div>
-                <div class="center">Configure Sensor "{{chosen_sensor}}"</div>
+                <div class="center">"{{chosen_sensor}}"</div>
             </ons-toolbar>
             <div class="margined">
                 <div class="margined" ng-show="filterLength > 0">
@@ -178,6 +180,28 @@
                     </ons-list-item>
                 </ons-list>
                 <button class="button margined" ng-click="submit()">Submit</button>
+            </div>
+            </div>
+        </script>
+
+        <script type="text/ons-template" id="outOfBattery.html">
+            <ons-toolbar>
+                <div class="left"><ons-back-button>Back</ons-back-button></div>
+                <div class="center">Out of battery</div>
+            </ons-toolbar>
+            <div ng-controller="OutOfBatteryController">
+            <div class="margined" style="font-size: 12px" ng-show="outOfBattery.length > 0">
+                <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
+                <div ng-repeat="member in outOfBattery | orderBy:battery:reverse">
+                    <ons-row>
+                        <ons-col><strong>{{member.name}}</strong></ons-col>
+                        <ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>
+                        <ons-col>{{member.battery | number : 1}}</ons-col>
+                        <ons-col>{{member.lat}}</ons-col>
+                        <ons-col>{{member.lon}}</ons-col>
+                    </ons-row>
+                </div>
+            </div>
             </div>
         </script>
    </body>
