@@ -27,7 +27,6 @@ To run from CL:
 
 Base functionality:
 
- * Submit for pattern
  * Sensors controling
  * Metrics tab, Members page : Out of battery > does nothing.
  * Refresh for all metrics pages
@@ -42,4 +41,5 @@ Additional functionality:
  * Center range inputs in pattern page
  * Configurable ordering in data tables
  * Colored battery levels
- * probably smth else - I left my TODO paper somewhere  
+ * probably smth else - I left my TODO paper somewhere
+ * Last refreshed time for metrics pages  

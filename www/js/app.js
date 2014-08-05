@@ -119,6 +119,11 @@ var intensityDefault = 2;
         $scope.red = 0;
         $scope.green = 0;
         $scope.blue = 0;
+
+        $scope.submit = function() {
+            $http.post(backend + '/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
+                '&red=' + $scope.red + '&green=' + $scope.green + '&blue=' + $scope.blue + '&speed=' + $scope.speed);
+        };
     }]);
 }());
 

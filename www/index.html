@@ -126,30 +126,33 @@
         </script>
 
         <script type="text/ons-template" id="pat.html">
-            <ons-toolbar>
-                <div class="left"><ons-back-button>Back</ons-back-button></div>
-                <div class="center">Configure Pattern</div>
-            </ons-toolbar>
-            <ons-list ng-controller="PatternController">
-                <ons-list-item>
-                    Pattern: <select ng-model="chosen_pattern" ng-options="pattern as pattern for pattern in patterns"></select>
-                </ons-list-item>
-                <ons-list-item>
-                    Speed: <input ng-model="speed" min="{{speedMin}}" max="{{speedMax}}" type="range" class="range">
-                </ons-list-item>
-                <ons-list-item>
-                    Intensity: <input ng-model="intensity" min="{{intensityMin}}" max="{{intensityMax}}" type="range" class="range">
-                </ons-list-item>
-                <ons-list-item>
-                    Red: <input ng-model="red" min="0" max="255" type="range" class="range" style="width:270px">
-                </ons-list-item>
-                <ons-list-item>
-                    Green: <input ng-model="green" min="0" max="255" type="range" class="range" style="width:270px">
-                </ons-list-item>
-                <ons-list-item>
-                    Blue: <input ng-model="blue" min="0" max="255" type="range" class="range" style="width:270px">
-                </ons-list-item>
-            </ons-list>
+            <div ng-controller="PatternController">
+                <ons-toolbar>
+                    <div class="left"><ons-back-button>Back</ons-back-button></div>
+                    <div class="center">Configure Pattern</div>
+                </ons-toolbar>
+                <ons-list>
+                    <ons-list-item>
+                        Pattern: <select ng-model="chosen_pattern" ng-options="pattern as pattern for pattern in patterns"></select>
+                    </ons-list-item>
+                    <ons-list-item>
+                        Speed: <input ng-model="speed" min="{{speedMin}}" max="{{speedMax}}" type="range" class="range">
+                    </ons-list-item>
+                    <ons-list-item>
+                        Intensity: <input ng-model="intensity" min="{{intensityMin}}" max="{{intensityMax}}" type="range" class="range">
+                    </ons-list-item>
+                    <ons-list-item>
+                        Red: <input ng-model="red" min="0" max="255" type="range" class="range" style="width:270px">
+                    </ons-list-item>
+                    <ons-list-item>
+                        Green: <input ng-model="green" min="0" max="255" type="range" class="range" style="width:270px">
+                    </ons-list-item>
+                    <ons-list-item>
+                        Blue: <input ng-model="blue" min="0" max="255" type="range" class="range" style="width:270px">
+                    </ons-list-item>
+                </ons-list>
+                <button class="button" ng-click="submit()">Submit</button>
+            </div>
         </script>
    </body>
 </html>
