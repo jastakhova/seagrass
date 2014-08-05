@@ -21,4 +21,25 @@ To run from CL:
 
 ## Emulator first page view
 
-![You will get this first screen when running this app](https://github.com/jastakhova/seagrass/blob/master/img/2014-08-05_0758.png "First screen") 
+![You will get this first screen when running this app](https://github.com/jastakhova/seagrass/blob/master/img/2014-08-05_0758.png "First screen")
+
+## TODO
+
+Base functionality:
+
+ * Submit for pattern
+ * Sensors controling
+ * Metrics tab, Members page : Out of battery > does nothing.
+ * Refresh for all metrics pages
+ * Error callback for all http requests
+ * Scrolling at pattern page and probably others
+
+Additional functionality:
+
+ * Graphs for history (d3?)
+ * Map for geolocations of members (would be easier to generate at backend IMHO)
+ * Make data tables nicer (like in twitter bootstrap)
+ * Center range inputs in pattern page
+ * Configurable ordering in data tables
+ * Colored battery levels
+ * probably smth else - I left my TODO paper somewhere  
