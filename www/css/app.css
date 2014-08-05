@@ -1,0 +1,11 @@
+.margined {
+    margin: 8px;
+}
+
+.vertically-margined {
+    vertical-margin: 8px;
+}
+
+.long-range {
+    width: 270px;
+}

@@ -27,11 +27,11 @@ To run from CL:
 
 Base functionality:
 
- * Sensors controling
  * Metrics tab, Members page : Out of battery > does nothing.
  * Refresh for all metrics pages
  * Error callback for all http requests
  * Scrolling at pattern page and probably others
+ * Refresh for sensor list in sensor control page
 
 Additional functionality:
 

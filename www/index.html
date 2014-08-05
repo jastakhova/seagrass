@@ -7,6 +7,7 @@
 
         <link rel="stylesheet" href="lib/onsen/css/onsenui.css">
         <link rel="stylesheet" href="lib/onsen/css/onsen-css-components.css">
+        <link rel="stylesheet" href="css/app.css">
         <title>SeaGrass</title>
 
         <script type="text/javascript" src="js/index.js"></script>
@@ -36,9 +37,9 @@
                     </div>
                 </div>
 
-                <div class="panel" ng-show="metrics.isSelected(1)" style="margin:8px">
+                <div class="panel margined" ng-show="metrics.isSelected(1)">
                     <div ng-controller="MembersController as members">
-                        <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0" style="vertical-margin: 8px">
+                        <ons-list ng-show="(members.members | filter:members.batteryFilter).length > 0" class="vertically-margined">
                             <ons-list-item modifier="chevron">
                                 <ons-row>
                                     <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
@@ -47,7 +48,7 @@
                         </ons-list>
 
                         <div style="font-size: 12px" ng-show="members.members.length > 0">
-                           <strong style="margin:8px"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
+                           <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
                             <div ng-repeat="member in members.members">
                                 <ons-row>
                                     <ons-col><strong>{{member.name}}</strong></ons-col>
@@ -61,10 +62,10 @@
                     </div>
                 </div>
 
-                <div class="panel" ng-show="metrics.isSelected(2)" style="margin:8px">
+                <div class="panel margined" ng-show="metrics.isSelected(2)">
                     <div ng-controller="SensorsController as sensors">
                         <div style="font-size: 12px" ng-show="sensors.sensors.length > 0">
-                            <strong style="margin:8px"><ons-row><ons-col></ons-col>
+                            <strong class="margined"><ons-row><ons-col></ons-col>
                                 <ons-col>Threshold</ons-col>
                                 <ons-col>Filter length</ons-col>
                             </ons-row></strong>
@@ -79,10 +80,10 @@
                     </div>
                 </div>
 
-                <div class="panel" ng-show="metrics.isSelected(3)" style="margin:8px">
+                <div class="panel margined" ng-show="metrics.isSelected(3)">
                     <div ng-controller="ComputerController as computer">
                         <div style="font-size: 12px" ng-show="computer.entries.length > 0">
-                            <strong style="margin:8px"><ons-row><ons-col></ons-col>
+                            <strong class="margined"><ons-row><ons-col></ons-col>
                                 <ons-col>CPU</ons-col>
                                 <ons-col>Battery</ons-col>
                                 <ons-col>Memory</ons-col>
@@ -103,38 +104,44 @@
 
         <script type="text/ons-template" id="control.html">
             <ons-navigator title="Navigator" var="controlNavigator">
-                    <ons-list>
-                        <ons-list-item ng-controller="ControlController as control">
-                            <div style="margin:8px">
-                                <button class="button" ng-click="control.startup()">Statup</button>
-                                <button class="button" ng-click="control.restart()">Restart</button>
-                                <button class="button" ng-click="control.shutdown()">Shutdown</button>
+                    <ons-list ng-controller="ControlController">
+                        <ons-list-item>
+                            <div class="margined">
+                                <button class="button" ng-click="startup()">Statup</button>
+                                <button class="button" ng-click="restart()">Restart</button>
+                                <button class="button" ng-click="shutdown()">Shutdown</button>
                             </div>
                         </ons-list-item>
                         <ons-list-item modifier="chevron" ng-click="controlNavigator.pushPage('pat.html', { animation : 'slide' } )">
-                            <ons-row style="margin:8px">
+                            <ons-row class="margined">
                                 <ons-col class="left">
                                     Configure pattern
                                 </ons-col>
                             </ons-row>
                         </ons-list-item>
-                        <ons-list-item>
-
+                        <ons-list-item modifier="chevron" ng-show="sensors.length > 0" style="content: '\f105'">
+                            <ons-row class="margined">
+                                <ons-col class="left">
+                                    Configure sensor <select ng-model="chosen_sensor" ng-options="sensor as sensor for sensor in sensors"></select>
+                                </ons-col>
+                                <ons-col class="right" ng-click="chooseSensor(controlNavigator, 'sensor.html')">
+                                </ons-col>
+                            </ons-row>
                         </ons-list-item>
                     </ons-list>
             </ons-navigator>
         </script>
 
         <script type="text/ons-template" id="pat.html">
-            <div ng-controller="PatternController">
-                <ons-toolbar>
-                    <div class="left"><ons-back-button>Back</ons-back-button></div>
-                    <div class="center">Configure Pattern</div>
-                </ons-toolbar>
+            <ons-toolbar>
+                <div class="left"><ons-back-button>Back</ons-back-button></div>
+                <div class="center">Configure Pattern</div>
+            </ons-toolbar>
+            <div ng-controller="PatternController" class="margined">
+                <div class="margined">
+                Pattern: <select ng-model="chosen_pattern" ng-options="pattern as pattern for pattern in patterns"></select>
+                </div>
                 <ons-list>
-                    <ons-list-item>
-                        Pattern: <select ng-model="chosen_pattern" ng-options="pattern as pattern for pattern in patterns"></select>
-                    </ons-list-item>
                     <ons-list-item>
                         Speed: <input ng-model="speed" min="{{speedMin}}" max="{{speedMax}}" type="range" class="range">
                     </ons-list-item>
@@ -142,16 +149,35 @@
                         Intensity: <input ng-model="intensity" min="{{intensityMin}}" max="{{intensityMax}}" type="range" class="range">
                     </ons-list-item>
                     <ons-list-item>
-                        Red: <input ng-model="red" min="0" max="255" type="range" class="range" style="width:270px">
+                        Red: <input ng-model="red" min="0" max="255" type="range" class="range long-range">
                     </ons-list-item>
                     <ons-list-item>
-                        Green: <input ng-model="green" min="0" max="255" type="range" class="range" style="width:270px">
+                        Green: <input ng-model="green" min="0" max="255" type="range" class="range long-range">
                     </ons-list-item>
-                    <ons-list-item>
-                        Blue: <input ng-model="blue" min="0" max="255" type="range" class="range" style="width:270px">
-                    </ons-list-item>
+                    <div class="margined">
+                        Blue: <input ng-model="blue" min="0" max="255" type="range" class="range long-range">
+                    </div>
                 </ons-list>
                 <button class="button" ng-click="submit()">Submit</button>
+            </div>
+        </script>
+
+        <script type="text/ons-template" id="sensor.html">
+            <div ng-controller="ChosenSensorController">
+            <ons-toolbar>
+                <div class="left"><ons-back-button>Back</ons-back-button></div>
+                <div class="center">Configure Sensor "{{chosen_sensor}}"</div>
+            </ons-toolbar>
+            <div class="margined">
+                <div class="margined" ng-show="filterLength > 0">
+                    Filter Length: <input ng-model="filterLength" min="1" max="2000" type="range" class="range long-range">
+                </div>
+                <ons-list ng-show="threshold > 0">
+                    <ons-list-item>
+                        Threshold: <input ng-model="threshold" min="1" max="2000" type="range" class="range long-range">
+                    </ons-list-item>
+                </ons-list>
+                <button class="button margined" ng-click="submit()">Submit</button>
             </div>
         </script>
    </body>

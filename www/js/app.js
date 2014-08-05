@@ -25,6 +25,31 @@ var intensityDefault = 2;
 
                 return deferred.promise;
             }
+        }).
+        service('Sensor', function($http, $log) {
+            this.sensor = "";
+            this.sensors = [];
+
+            this.get = function() {
+                return this.sensor;
+            };
+
+            this.set = function(s) {
+                this.sensor = s;
+            }
+
+            this.getSensors = function(callback) {
+                if (this.sensors.length == 0)
+                {
+                    $http.get(backend + '/metrics/sensors').success(function(data) {
+                        callback(data.collection);
+                        this.sensors = data.collection;
+                    });
+                } else {
+                    callback(data.collection);
+                }
+
+            }
         });
 
     seagrass.controller("MetricsController", [function () {
@@ -53,13 +78,13 @@ var intensityDefault = 2;
         });
     }]);
 
-    seagrass.controller("SensorsController", ['$http', '$log', function ($http, $log) {
+    seagrass.controller("SensorsController", ['$http', '$log', 'Sensor', function ($http, $log, Sensor) {
         var home = this;
 
         home.sensors = [];
 
-        $http.get(backend + '/metrics/sensors').success(function(data) {
-            home.sensors = data.collection;
+        Sensor.getSensors(function(data) {
+            home.sensors = data;
         });
     }]);
 
@@ -87,20 +112,36 @@ var intensityDefault = 2;
         });
     }]);
 
-    seagrass.controller("ControlController", ['$http', '$log', function ($http, $log) {
-        this.startup = function() {
+    seagrass.controller("ControlController", ['$scope', '$http', '$log', 'Sensor', function ($scope, $http, $log, Sensor) {
+        $scope.startup = function() {
           $http.post(backend + '/startup');
         };
 
-        this.restart = function() {
+        $scope.restart = function() {
             $http.post(backend + '/restart');
         };
 
-        this.shutdown = function() {
+        $scope.shutdown = function() {
             $http.post(backend + '/shutdown');
         };
 
-        this.dummy = 0;
+        $scope.chosen_sensor = Sensor.get();
+
+        $scope.sensors = [];
+
+        Sensor.getSensors(function(data) {
+            $scope.sensors = data.map(function(sensor) {
+                return sensor.name;
+            });
+        });
+
+        $scope.chooseSensor = function(navigator, page) {
+            if ($scope.chosen_sensor != "")
+            {
+                Sensor.set($scope.chosen_sensor);
+                navigator.pushPage(page, { animation : 'slide' } );
+            }
+        };
     }]);
 
     seagrass.controller("PatternController", ['$scope', '$http', '$log', function ($scope, $http, $log) {
@@ -124,6 +165,30 @@ var intensityDefault = 2;
             $http.post(backend + '/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
                 '&red=' + $scope.red + '&green=' + $scope.green + '&blue=' + $scope.blue + '&speed=' + $scope.speed);
         };
+    }]);
+
+    seagrass.controller("ChosenSensorController", ['$scope', '$http', '$log', 'Sensor', function ($scope, $http, $log, Sensor) {
+        $scope.chosen_sensor = Sensor.get();
+
+        $scope.filterLength = 0;
+        $scope.threshold = 0;
+
+        $scope.submit = function() {
+            $http.post(backend + '/sensor/' + $scope.chosen_sensor + '?threshold=' + $scope.threshold);
+            $http.post(backend + '/sensor/' + $scope.chosen_sensor + '?filterLength=' + $scope.filterLength);
+        };
+
+        Sensor.getSensors(function(data) {
+           data.map(function(sensor) {
+              if (sensor.name === $scope.chosen_sensor)
+              {
+                  $scope.threshold = sensor.threshold;
+                  $scope.filterLength = sensor.filterLength;
+              }
+
+              return sensor;
+           })
+        });
     }]);
 }());
 
