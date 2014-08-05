@@ -1,0 +1,249 @@
+Each of the towers is responsible for controlling the LEDs and broadcasts a
+heartbeat that contains the latitude, longitude and battery level.  All of
+this data is aggregated in a computer in the central platform that exposes
+a RESTful API.  The details of the API are listed below.
+
+The client primarily consists of lists and buttons & sliders.  There is a
+graphical element in that we=E2=80=99d like to map out the topology of the
+configuration to help with monitoring towers that are in trouble.
+
+The unique situation is that there is no access to the internet.  The
+central computer is a Raspberry Pi and cannot serve much static data so we
+want the application to have much of its resources local.
+
+Please let me know if you are interested, how much you think something like
+this would cost and if you have any other questions.  I think you=E2=80=99l=
+l agree
+it=E2=80=99s a pretty simple application.
+
+Thanks again for the interest,
+
+mauricio
+
+Client Requirements
+Monitoring
+
+   -
+
+   Refresh button
+   -
+
+   Member Display
+   -
+
+      Topology based on received latitude and longitude
+      -
+
+      Color is indicative of remaining battery voltage
+      -
+
+      List of full member roster with detailed information
+      -
+
+         ID
+         -
+
+         Pattern details
+         -
+
+         Battery voltage
+         -
+
+   Sensor Display
+   -
+
+      List of available sensors with details
+      -
+
+         Filter length
+         -
+
+         Broadcast threshold
+         -
+
+         Recent activity levels
+         -
+
+   Main Computer Metrics
+   -
+
+      Recent CPU, battery voltage, memory levels
+
+Control
+
+   -
+
+   System Shutdown, Startup & Reset buttons
+   -
+
+   List of available pattern commands (currently ~30)
+   -
+
+      Once selected detailed slider controls for
+      -
+
+         Speed
+         -
+
+         Intensity
+         -
+
+         Red
+         -
+
+         Green
+         -
+
+         Blue
+         -
+
+      Toggle button for streamed updates or a required button press for
+      pattern submit
+      -
+
+   Sensor control
+   -
+
+      Slider and submit buttons for
+      -
+
+         Moving average filter (1-2000)
+         -
+
+         Broadcast threshold (1-2000)
+
+
+Server REST API
+Queries
+
+   - GET /metrics/cpu
+   The most recent 6 hours of CPU load in percentage by minute for a total
+   of 360 observations.
+
+
+
+   -
+
+      Response
+
+      {history: { [LIST [FLOAT]] }}
+      - GET /metrics/battery
+   The most recent 6 hours of main system battery level in Volts by minute
+   for a total of 360 observations.
+
+
+
+   -
+
+      Response
+
+      {history: { [LIST [FLOAT]] }}
+      - GET /metrics/memory
+   The most recent 6 hours of memory usage in MBs by minute for a total of
+   360 observations.
+
+
+
+   -
+
+      Response
+
+      {history: { [LIST [FLOAT]] }}
+      - GET /metrics/sensor/{id}/temperature
+   The most recent 6 hours of CPU temperature in fahrenheit by minute for a
+   total of 360 observations.
+
+
+
+   -
+
+      Response
+
+      {history: { [LIST [FLOAT]] }}
+      - GET /metrics/sensor/{id}/activity_level
+      -
+
+      Response
+
+      {history: { [LIST [FLOAT]] }}
+      - GET /members
+      -
+
+      Response
+
+
+{members: { [LIST [MEMBER]] }}
+
+   - GET /members/{id}
+   Details for member {id}.  {id} is assigned as the network is constructed
+   and is not persistent through power cycle.  This record includes locatio=
+n
+   information as well as current operating status.
+
+
+
+   -
+
+   Response
+
+   {member:
+       {
+     xbee: INTEGER,      // Lower 32 bit XBee address
+     pattern: INTEGER,   // Pattern id
+          lat: FLOAT,         // Latitude in decimal degrees
+          lon: FLOAT,         // Longitude in decimal degrees
+          alt: FLOAT,         // Altitude in feet
+          battery: FLOAT      // Battery voltage
+       }
+   }
+
+Commands
+
+   - POST /parameters/sensor/{id}?threshold=3D{threshold}
+   - POST /parameters/sensor/{id}?filterLength=3D{filterLength}
+   - POST /shutdown
+   - POST /startup
+   - POST /restart
+   - POST
+   /pattern/{id}?intensity=3D{intensity}&red=3D{red}&green=3D{green}&blue=
+=3D{blue}&speed=3D{speed}
+
+Response Types
+
+   -
+
+   Success
+
+   HTTP/1.1 200
+   -
+
+   Not found
+
+   HTTP/1.1 404
+   {
+    "errors": [
+       {
+        "message": "Not Found"
+       }
+    ]
+   }
+
+
+
+   -
+
+   Server error
+
+
+HTTP/1.1 500
+{
+  "errors": [
+    {
+      "message": "Server error"
+
+     "phrase": "Error type"
+
+   }
+  ]
+}
+
