@@ -14,19 +14,69 @@ var intensityDefault = 2;
 
 (function() {
     var seagrass = angular.module("seagrass", ['onsen']).
-        service('History', function($http, $q, $log) {
+        service('Util', function() {
+            this.formatDate = function(date) {
+                return date.getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
+            };
+        }).
+        service('LastUpdateService', function($http, $log, Util) {
+            this.time = {};
+            this.listeners = {};
+            this.refresh = {};
+
+            var home = this;
+
+            home.formatDateById = function(id) {
+                return Util.formatDate(new Date(home.time[id]))
+            };
+
+            this.get = function(path, callback, id) {
+                var refreshFunction =  function() {
+                    $http.get(path).success(callback);
+
+                    home.time[id] = new Date().getTime();
+
+                    var listener = home.listeners[id];
+                    if (listener) {
+                        listener(home.formatDateById(id));
+                    }
+                }
+
+                home.refresh[id] = refreshFunction;
+                refreshFunction();
+            };
+
+            this.getLastUpdated = function(id) {
+                return home.time[id] ? home.formatDateById(id) : "";
+            };
+
+            this.addListener = function(id, callback) {
+                home.listeners[id] = callback;
+            };
+
+            this.refresh = function(id) {
+                if (home.refresh[id])
+                {
+                    home.refresh[id]();
+                }
+            }
+        }).
+        service('History', function($http, $q, $log, LastUpdateService) {
             this.get = function(metric){
                 var deferred = $q.defer();
-                $http.get(backend + '/metrics/' + metric).success(function(data, status) {
-                    deferred.resolve(data.history);
-                }).error(function(data, status) {
+
+                var onError = function(data, status) {
                     deferred.reject(data);
-                });
+                };
+
+                LastUpdateService.get(backend + '/metrics/' + metric, function(data, status) {
+                    deferred.resolve(data.history);
+                }, metric);
 
                 return deferred.promise;
             }
         }).
-        service('CachedService', function($http, $log) {
+        service('CachedService', function($http, $log, LastUpdateService) {
             this.sensor = "";
             this.sensors = [];
             this.members = [];
@@ -42,10 +92,10 @@ var intensityDefault = 2;
             this.getSensors = function(callback) {
                 if (this.sensors.length == 0)
                 {
-                    $http.get(backend + '/metrics/sensors').success(function(data) {
+                    LastUpdateService.get(backend + '/metrics/sensors', function(data) {
                         callback(data.collection);
                         this.sensors = data.collection;
-                    });
+                    }, "sensors");
                 } else {
                     callback(data.collection);
                 }
@@ -54,10 +104,10 @@ var intensityDefault = 2;
             this.getMembers = function(callback) {
                 if (this.members.length == 0)
                 {
-                    $http.get(backend + '/members').success(function(data) {
+                    LastUpdateService.get(backend + '/members', function(data) {
                         callback(data.collection);
                         this.members = data.collection;
-                    });
+                    }, "members");
                 } else {
                     callback(data.collection);
                 }
@@ -80,14 +130,26 @@ var intensityDefault = 2;
         };
     }]);
 
-    seagrass.controller("MembersController", ['$scope', '$http', '$log', 'CachedService', function ($scope, $http, $log, CachedService) {
+    seagrass.controller("MembersController", ['$scope', '$http', '$log', 'CachedService', 'LastUpdateService', function ($scope, $http, $log, CachedService, LastUpdateService) {
         $scope.batteryFilter = CachedService.batteryFilter;
 
         $scope.members = [];
 
+        var id = "members";
+
+        LastUpdateService.addListener(id, function(time) {
+            $scope.lastUpdated = time;
+        });
+
+        $scope.lastUpdated = LastUpdateService.getLastUpdated(id);
+
         CachedService.getMembers(function(data) {
             $scope.members = data;
         });
+
+        $scope.refresh = function() {
+           LastUpdateService.refresh(id);
+        };
     }]);
 
     seagrass.controller("SensorsController", ['$http', '$log', 'CachedService', function ($http, $log, CachedService) {
@@ -100,7 +162,7 @@ var intensityDefault = 2;
         });
     }]);
 
-    seagrass.controller("ComputerController", ['$http', '$log', '$q', 'History', function ($http, $log, $q, History) {
+    seagrass.controller("ComputerController", ['$http', '$log', '$q', 'History', 'Util', function ($http, $log, $q, History, Util) {
         var home = this;
 
         home.entries = [];
@@ -118,7 +180,7 @@ var intensityDefault = 2;
                 var date = new Date(time);
                 var tick = date.getMinutes() % 10 === 0;
                 time = time - minute;
-                var tick = tick ? date.getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) : "";
+                var tick = tick ? Util.formatDate(date) : "";
                 home.entries.push({cpu : data[0][i], battery : data[1][i], memory: data[2][i], time : tick});
             }
         });

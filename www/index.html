@@ -40,6 +40,17 @@
 
                 <div class="panel margined" ng-show="metrics.isSelected(1)">
                     <div ng-controller="MembersController">
+                        <ons-row class="margined" style="font-size:14px;">
+                            <ons-col class="left">
+                            </ons-col>
+                            <ons-col class="right" align="center">
+                                Updated at {{lastUpdated}}
+                            </ons-col>
+                            <ons-col class="right" width="20%" style="horizontal-margin:8px">
+                                <button ng-click="refresh()"><ons-icon icon="refresh" size="14px" spin="false"></ons-icon></button>
+                            </ons-col>
+                        </ons-row>
+
                         <ons-list ng-show="(members | filter:batteryFilter).length > 0" class="vertically-margined">
                             <ons-list-item modifier="chevron" ng-click="membersNavigator.pushPage('outOfBattery.html', { animation : 'slide' } )">
                                 <ons-row>
