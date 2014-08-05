@@ -75,13 +75,23 @@
                 </div>
 
                 <div class="panel margined" ng-show="metrics.isSelected(2)">
-                    <div ng-controller="SensorsController as sensors">
-                        <div style="font-size: 12px" ng-show="sensors.sensors.length > 0">
+                    <div ng-controller="SensorsController">
+                        <ons-row class="margined" style="font-size:14px;">
+                            <ons-col class="left">
+                            </ons-col>
+                            <ons-col class="right" align="center">
+                                Updated at {{lastUpdated}}
+                            </ons-col>
+                            <ons-col class="right" width="20%" style="horizontal-margin:8px">
+                                <button ng-click="refresh()"><ons-icon icon="refresh" size="14px" spin="false"></ons-icon></button>
+                            </ons-col>
+                        </ons-row>
+                        <div style="font-size: 12px" ng-show="sensors.length > 0">
                             <strong class="margined"><ons-row><ons-col></ons-col>
                                 <ons-col>Threshold</ons-col>
                                 <ons-col>Filter length</ons-col>
                             </ons-row></strong>
-                            <div ng-repeat="sensor in sensors.sensors">
+                            <div ng-repeat="sensor in sensors">
                                 <ons-row>
                                     <ons-col><strong>{{sensor.name}}</strong></ons-col>
                                     <ons-col><div style="text-align: center">{{sensor.threshold}}</div></ons-col>
@@ -93,14 +103,24 @@
                 </div>
 
                 <div class="panel margined" ng-show="metrics.isSelected(3)">
-                    <div ng-controller="ComputerController as computer">
-                        <div style="font-size: 12px" ng-show="computer.entries.length > 0">
+                    <div ng-controller="ComputerController">
+                        <ons-row class="margined" style="font-size:14px;">
+                            <ons-col class="left">
+                            </ons-col>
+                            <ons-col class="right" align="center">
+                                Updated at {{lastUpdated}}
+                            </ons-col>
+                            <ons-col class="right" width="20%" style="horizontal-margin:8px">
+                                <button ng-click="refresh()"><ons-icon icon="refresh" size="14px" spin="false"></ons-icon></button>
+                            </ons-col>
+                        </ons-row>
+                        <div style="font-size: 12px" ng-show="entries.length > 0">
                             <strong class="margined"><ons-row><ons-col></ons-col>
                                 <ons-col>CPU</ons-col>
                                 <ons-col>Battery</ons-col>
                                 <ons-col>Memory</ons-col>
                             </ons-row></strong>
-                            <div ng-repeat="entry in computer.entries">
+                            <div ng-repeat="entry in entries">
                                 <ons-row>
                                     <ons-col><strong>{{entry.time}}</strong></ons-col>
                                     <ons-col><div style="text-align: center">{{entry.cpu}}</div></ons-col>

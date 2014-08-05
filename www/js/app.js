@@ -30,9 +30,9 @@ var intensityDefault = 2;
                 return Util.formatDate(new Date(home.time[id]))
             };
 
-            this.get = function(path, callback, id) {
-                var refreshFunction =  function() {
-                    $http.get(path).success(callback);
+            this.getGeneral = function(request, id) {
+                var refreshFunction = function() {
+                    request();
 
                     home.time[id] = new Date().getTime();
 
@@ -44,6 +44,10 @@ var intensityDefault = 2;
 
                 home.refresh[id] = refreshFunction;
                 refreshFunction();
+            };
+
+            this.get = function(path, callback, id) {
+                home.getGeneral(function() {$http.get(path).success(callback)}, id);
             };
 
             this.getLastUpdated = function(id) {
@@ -65,13 +69,11 @@ var intensityDefault = 2;
             this.get = function(metric){
                 var deferred = $q.defer();
 
-                var onError = function(data, status) {
-                    deferred.reject(data);
-                };
-
-                LastUpdateService.get(backend + '/metrics/' + metric, function(data, status) {
+                $http.get(backend + '/metrics/' + metric).success(function(data, status) {
                     deferred.resolve(data.history);
-                }, metric);
+                }).error(function(data, status) {
+                    deferred.reject(data);
+                });
 
                 return deferred.promise;
             }
@@ -89,27 +91,29 @@ var intensityDefault = 2;
                 this.sensor = s;
             }
 
+            var home = this;
+
             this.getSensors = function(callback) {
-                if (this.sensors.length == 0)
+                if (home.sensors.length === 0)
                 {
                     LastUpdateService.get(backend + '/metrics/sensors', function(data) {
                         callback(data.collection);
-                        this.sensors = data.collection;
+                        home.sensors = data.collection;
                     }, "sensors");
                 } else {
-                    callback(data.collection);
+                    callback(home.sensors);
                 }
             }
 
             this.getMembers = function(callback) {
-                if (this.members.length == 0)
+                if (home.members.length === 0)
                 {
                     LastUpdateService.get(backend + '/members', function(data) {
                         callback(data.collection);
-                        this.members = data.collection;
+                        home.members = data.collection;
                     }, "members");
                 } else {
-                    callback(data.collection);
+                    callback(home.members);
                 }
             }
 
@@ -135,6 +139,10 @@ var intensityDefault = 2;
 
         $scope.members = [];
 
+        CachedService.getMembers(function(data) {
+            $scope.members = data;
+        });
+
         var id = "members";
 
         LastUpdateService.addListener(id, function(time) {
@@ -143,47 +151,70 @@ var intensityDefault = 2;
 
         $scope.lastUpdated = LastUpdateService.getLastUpdated(id);
 
-        CachedService.getMembers(function(data) {
-            $scope.members = data;
-        });
-
         $scope.refresh = function() {
            LastUpdateService.refresh(id);
         };
     }]);
 
-    seagrass.controller("SensorsController", ['$http', '$log', 'CachedService', function ($http, $log, CachedService) {
-        var home = this;
+    seagrass.controller("SensorsController", ['$scope', '$http', '$log', 'CachedService', 'LastUpdateService', function ($scope, $http, $log, CachedService, LastUpdateService) {
+        $scope.sensors = [];
 
-        home.sensors = [];
+        var id = "sensors";
+
+        LastUpdateService.addListener(id, function(time) {
+            $scope.lastUpdated = time;
+        });
+
+        $scope.lastUpdated = LastUpdateService.getLastUpdated(id);
+
+        $scope.refresh = function() {
+            LastUpdateService.refresh(id);
+        };
 
         CachedService.getSensors(function(data) {
-            home.sensors = data;
+            $scope.sensors = data;
         });
     }]);
 
-    seagrass.controller("ComputerController", ['$http', '$log', '$q', 'History', 'Util', function ($http, $log, $q, History, Util) {
-        var home = this;
+    seagrass.controller("ComputerController", ['$scope', '$http', '$log', '$q', 'History', 'Util', 'LastUpdateService', function ($scope, $http, $log, $q, History, Util, LastUpdateService) {
+        $scope.entries = [];
 
-        home.entries = [];
-
-        var time = new Date().getTime();
         var minute = 60*1000;
 
-        $q.all([
-            History.get('cpu'),
-            History.get('battery'),
-            History.get('memory')
-        ]).then(function(data) {
-            for(var i = 0; i < data[0].length; i++)
-            {
-                var date = new Date(time);
-                var tick = date.getMinutes() % 10 === 0;
-                time = time - minute;
-                var tick = tick ? Util.formatDate(date) : "";
-                home.entries.push({cpu : data[0][i], battery : data[1][i], memory: data[2][i], time : tick});
-            }
+        load = function() {
+            $q.all([
+                    History.get('cpu'),
+                    History.get('battery'),
+                    History.get('memory')
+                ]).then(function(data) {
+                    var time = new Date().getTime();
+                    $scope.entries = [];
+
+                    for (var i = 0; i < data[0].length; i++)
+                    {
+                        var date = new Date(time);
+                        var tick = date.getMinutes() % 10 === 0;
+                        time = time - minute;
+                        var tick = tick ? Util.formatDate(date) : "";
+                        var entry = {cpu : data[0][i], battery : data[1][i], memory: data[2][i], time : tick};
+                        $scope.entries.push(entry);
+                    }
+                });
+        };
+
+        var id = "cpu";
+
+        LastUpdateService.addListener(id, function(time) {
+            $scope.lastUpdated = time;
         });
+
+        $scope.lastUpdated = LastUpdateService.getLastUpdated(id);
+
+        $scope.refresh = function() {
+            LastUpdateService.refresh(id);
+        };
+
+        LastUpdateService.getGeneral(load, id);
     }]);
 
     seagrass.controller("ControlController", ['$scope', '$http', '$log', 'CachedService', function ($scope, $http, $log, CachedService) {
