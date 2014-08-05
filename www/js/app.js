@@ -1,4 +1,6 @@
 var backend = "http://thawing-hamlet-4746.herokuapp.com";
+var patternRange = 30;
+var batteryThreshold = 7;
 
 (function() {
     var seagrass = angular.module("seagrass", ['onsen']).
@@ -13,6 +15,9 @@ var backend = "http://thawing-hamlet-4746.herokuapp.com";
 
                 return deferred.promise;
             }
+        }).
+        service('Pattern', function($http, $log) {
+          this.chosen_pattern = 0;
         }
     );
 
@@ -32,7 +37,7 @@ var backend = "http://thawing-hamlet-4746.herokuapp.com";
         var home = this;
 
         this.batteryFilter = function (member) {
-            return member.battery < 7;
+            return member.battery < batteryThreshold;
         };
 
         home.members = [];
@@ -65,17 +70,40 @@ var backend = "http://thawing-hamlet-4746.herokuapp.com";
             History.get('battery'),
             History.get('memory')
         ]).then(function(data) {
-            $log.info("Loaded " + data.length + " " + data[0] + " " + data[1] + " " + data[2]);
             for(var i = 0; i < data[0].length; i++)
             {
                 var date = new Date(time);
                 var tick = date.getMinutes() % 10 === 0;
                 time = time - minute;
-                var tick = tick ? date.getHours() + ":" + date.getMinutes() : "";
+                var tick = tick ? date.getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) : "";
                 home.entries.push({cpu : data[0][i], battery : data[1][i], memory: data[2][i], time : tick});
-                $log.info(home.entries.length + " time " + time + " " + new Date(time).toTimeString());
             }
         });
+    }]);
+
+    seagrass.controller("ControlController", ['$http', '$log', function ($http, $log) {
+        this.startup = function() {
+          $http.post(backend + '/startup');
+        };
+
+        this.restart = function() {
+            $http.post(backend + '/restart');
+        };
+
+        this.shutdown = function() {
+            $http.post(backend + '/shutdown');
+        };
+
+        this.dummy = 0;
+    }]);
+
+    seagrass.controller("PatternController", ['$scope', '$http', '$log', function ($scope, $http, $log) {
+        $scope.patterns = [1, 2, 3 ]; //Array.apply(null, Array(patternRange)).map(function (_, i) {return i;});
+
+        $scope.chosen_pattern = 1;
+
+        $log.info(Object.keys($scope.$parent));
+
     }]);
 }());
 

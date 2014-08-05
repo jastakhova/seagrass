@@ -16,11 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-$("body").addClass("ios7");
-$("body").append('
-
-');
-
 var app = {
     // Application Constructor
     initialize: function() {

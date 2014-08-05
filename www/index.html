@@ -9,7 +9,6 @@
         <link rel="stylesheet" href="lib/onsen/css/onsen-css-components.css">
         <title>SeaGrass</title>
 
-        <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript" src="lib/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="lib/angular.js"></script>
@@ -106,11 +105,40 @@
         </script>
 
         <script type="text/ons-template" id="control.html">
-            <ons-toolbar>
-                <div class="center">Comments</div>
-            </ons-toolbar>
+            <ons-navigator title="Navigator" var="controlNavigator">
+                    <ons-list>
+                        <ons-list-item ng-controller="ControlController as control">
+                            <div style="margin:8px">
+                                <button class="button" ng-click="control.startup()">Statup</button>
+                                <button class="button" ng-click="control.restart()">Restart</button>
+                                <button class="button" ng-click="control.shutdown()">Shutdown</button>
+                            </div>
+                        </ons-list-item>
+                        <ons-list-item modifier="chevron" ng-click="controlNavigator.pushPage('pat.html', { animation : 'slide' } )">
+                            <ons-row style="margin:8px">
+                                <ons-col class="left">
+                                    Configure pattern
+                                </ons-col>
+                            </ons-row>
+                        </ons-list-item>
+                        <ons-list-item>
 
-            <p style="padding-top: 100px; color: #999; text-align: center">Page Contents</p>
+                        </ons-list-item>
+                    </ons-list>
+            </ons-navigator>
+        </script>
+
+        <script type="text/ons-template" id="pat.html">
+                <ons-toolbar>
+                    <div class="left"><ons-back-button>Back</ons-back-button></div>
+                    <div class="center">Configure Pattern</div>
+                </ons-toolbar>
+                <ons-list ng-controller="PatternController as patt">
+                    <ons-list-item>
+                        {{chosen_pattern}}
+                        <!--Pattern: <select ng-model="pattern.chosen_pattern" ng-options="pattern as pattern for pattern in pattern.patterns"></select>-->
+                    </ons-list-item>
+                </ons-list>
         </script>
    </body>
 </html>
