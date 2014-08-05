@@ -21,4 +21,4 @@ To run from CL:
 
 ## Emulator first page view
 
-TBD 
+https://github.com/jastakhova/seagrass/blob/master/img/2014-08-05_0758.png 
