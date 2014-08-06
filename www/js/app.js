@@ -83,7 +83,7 @@ var intensityDefault = 2;
                 }
             }
         }).
-        service('History', function($http, $q, $log, LastUpdateService) {
+        service('History', function($http, $q, $log, LastUpdateService, ErrorService) {
             this.get = function(metric){
                 var deferred = $q.defer();
 
@@ -91,6 +91,7 @@ var intensityDefault = 2;
                     deferred.resolve(data.history);
                 }).error(function(data, status) {
                     deferred.reject(data);
+                    ErrorService.errorCallback(data, status);
                 });
 
                 return deferred.promise;
