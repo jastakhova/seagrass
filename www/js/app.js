@@ -19,7 +19,24 @@ var intensityDefault = 2;
                 return date.getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
             };
         }).
-        service('LastUpdateService', function($http, $log, Util) {
+        service('ErrorService', function() {
+           var home = this;
+
+           this.errorCallback = function(data, status) {
+               home.error = "Request status was " + status + ".";
+               if (home.listener)
+               {
+                   home.listener(home.error);
+               }
+               errormodal.show();
+               setTimeout('errormodal.hide()', 1500);
+           };
+
+           this.setListener = function(listener) {
+               home.listener = listener;
+           };
+        }).
+        service('LastUpdateService', function($http, $log, Util, ErrorService) {
             this.time = {};
             this.listeners = {};
             this.refresh = {};
@@ -47,7 +64,8 @@ var intensityDefault = 2;
             };
 
             this.get = function(path, callback, id) {
-                home.getGeneral(function() {$http.get(path).success(callback)}, id);
+                var errorCallback = function() {};
+                home.getGeneral(function() {$http.get(path).success(callback).error(ErrorService.errorCallback)}, id);
             };
 
             this.getLastUpdated = function(id) {
@@ -111,7 +129,7 @@ var intensityDefault = 2;
                     LastUpdateService.get(backend + '/members', function(data) {
                         callback(data.collection);
                         home.members = data.collection;
-                    }, "members");
+                    }, /*function(data, status) {},*/ "members");
                 } else {
                     callback(home.members);
                 }
@@ -267,7 +285,7 @@ var intensityDefault = 2;
         $scope.blue = 0;
 
         $scope.submit = function() {
-            $http.post(backend + '/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
+            $http.put(backend + '/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
                 '&red=' + $scope.red + '&green=' + $scope.green + '&blue=' + $scope.blue + '&speed=' + $scope.speed);
         };
     }]);
@@ -301,6 +319,14 @@ var intensityDefault = 2;
 
         CachedService.getMembers(function(data) {
             $scope.outOfBattery = data.filter(CachedService.batteryFilter);
+        });
+    }]);
+
+    seagrass.controller("ErrorController", ['$scope', '$log', 'ErrorService', function($scope, $log, ErrorService) {
+        $scope.error = "";
+
+        ErrorService.setListener(function(message) {
+           $scope.error = message;
         });
     }]);
 }());

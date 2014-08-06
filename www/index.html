@@ -18,6 +18,12 @@
         <script type="text/javascript" src="js/app.js"></script>
     </head>
     <body>
+        <ons-modal var="errormodal" ng-controller="ErrorController">
+            <i class="fa fa-warning"></i>
+            <br><br>
+            {{error}}
+        </ons-modal>
+
         <ons-tabbar>
             <ons-tabbar-item page="metrics.html" label="Metrics" icon="tags" active="true"></ons-tabbar-item>
             <ons-tabbar-item page="control.html" label="Control" icon="gear"></ons-tabbar-item>
