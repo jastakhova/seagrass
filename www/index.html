@@ -71,6 +71,7 @@
 
                         <div style="font-size: 12px" ng-show="members.length > 0">
                            <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
+                            <ons-scroller>
                             <div ng-repeat="member in members | orderBy:'name'">
                                 <ons-row>
                                     <ons-col><strong>{{member.name}}</strong></ons-col>
@@ -80,6 +81,7 @@
                                     <ons-col>{{member.lon}}</ons-col>
                                 </ons-row>
                             </div>
+                            </ons-scroller>
                         </div>
                     </div>
                 </div>
@@ -101,6 +103,7 @@
                                 <ons-col>Threshold</ons-col>
                                 <ons-col>Filter length</ons-col>
                             </ons-row></strong>
+                            <ons-scroller>
                             <div ng-repeat="sensor in sensors">
                                 <ons-row>
                                     <ons-col><strong>{{sensor.name}}</strong></ons-col>
@@ -108,6 +111,7 @@
                                     <ons-col>{{sensor.filterLength}}</ons-col>
                                 </ons-row>
                             </div>
+                            </ons-scroller>
                         </div>
                     </div>
                 </div>
@@ -130,6 +134,7 @@
                                 <ons-col>Battery</ons-col>
                                 <ons-col>Memory</ons-col>
                             </ons-row></strong>
+                            <ons-scroller>
                             <div ng-repeat="entry in entries">
                                 <ons-row>
                                     <ons-col><strong>{{entry.time}}</strong></ons-col>
@@ -138,6 +143,7 @@
                                     <ons-col>{{entry.memory}}</ons-col>
                                 </ons-row>
                             </div>
+                            </ons-scroller>
                         </div>
                     </div>
                 </div>
@@ -180,6 +186,7 @@
                 <div class="left"><ons-back-button>Back</ons-back-button></div>
                 <div class="center">Configure Pattern</div>
             </ons-toolbar>
+            <ons-scroller>
             <div ng-controller="PatternController" class="margined">
                 <div class="margined">
                 Pattern: <select ng-model="chosen_pattern" ng-options="pattern as pattern for pattern in patterns"></select>
@@ -203,6 +210,7 @@
                 </ons-list>
                 <button class="button" ng-click="submit()">Submit</button>
             </div>
+            </ons-scroller>
         </script>
 
         <script type="text/ons-template" id="sensor.html">
@@ -233,6 +241,7 @@
             <div ng-controller="OutOfBatteryController">
             <div class="margined" style="font-size: 12px" ng-show="outOfBattery.length > 0">
                 <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
+                <ons-scroller>
                 <div ng-repeat="member in outOfBattery | orderBy:'battery':reverse">
                     <ons-row>
                         <ons-col><strong>{{member.name}}</strong></ons-col>
@@ -242,6 +251,7 @@
                         <ons-col>{{member.lon}}</ons-col>
                     </ons-row>
                 </div>
+                </ons-scroller>
             </div>
             </div>
         </script>

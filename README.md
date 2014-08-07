@@ -25,14 +25,8 @@ To run from CL:
 
 ## TODO
 
-Base functionality:
-
- * Scrolling at pattern page and probably others
-
-Additional functionality:
-
- * Graphs for history (d3?)
- * Map for geolocations of members (would be easier to generate at backend IMHO)
+ * Graphs for history (sparklines)
+ * Map for geolocations of members (d3)
  * Make data tables nicer (like in twitter bootstrap)
  * Center range inputs in pattern page
  * Configurable ordering in data tables
