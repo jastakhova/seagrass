@@ -27,9 +27,7 @@ To run from CL:
 
 Base functionality:
 
- * Error callback for all http requests
  * Scrolling at pattern page and probably others
- * Refresh for sensor list in sensor control page
 
 Additional functionality:
 
@@ -40,5 +38,4 @@ Additional functionality:
  * Configurable ordering in data tables
  * Colored battery levels
  * probably smth else - I left my TODO paper somewhere
- * Last refreshed time for metrics pages
  * Refresh could show progress

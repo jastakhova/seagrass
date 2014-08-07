@@ -19,7 +19,7 @@ var intensityDefault = 2;
                 return date.getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
             };
         }).
-        service('ErrorService', function() {
+        service('ErrorService', function($http) {
            var home = this;
 
            this.errorCallback = function(data, status) {
@@ -35,6 +35,14 @@ var intensityDefault = 2;
            this.setListener = function(listener) {
                home.listener = listener;
            };
+        }).
+        service('HttpService', function($http, ErrorService) {
+            this.post = function(url) {
+                $http.post(backend + url).success(function() {
+                    checkmodal.show();
+                    setTimeout('checkmodal.hide()', 700);
+                }).error(ErrorService.errorCallback);
+            };
         }).
         service('LastUpdateService', function($http, $log, Util, ErrorService) {
             this.time = {};
@@ -236,17 +244,17 @@ var intensityDefault = 2;
         LastUpdateService.getGeneral(load, id);
     }]);
 
-    seagrass.controller("ControlController", ['$scope', '$http', '$log', 'CachedService', function ($scope, $http, $log, CachedService) {
+    seagrass.controller("ControlController", ['$scope', '$http', '$log', 'CachedService', 'HttpService', function ($scope, $http, $log, CachedService, HttpService) {
         $scope.startup = function() {
-          $http.post(backend + '/startup');
+            HttpService.post('/startup');
         };
 
         $scope.restart = function() {
-            $http.post(backend + '/restart');
+            HttpService.post('/restart');
         };
 
         $scope.shutdown = function() {
-            $http.post(backend + '/shutdown');
+            HttpService.post('/shutdown');
         };
 
         $scope.chosen_sensor = CachedService.get();
@@ -268,7 +276,7 @@ var intensityDefault = 2;
         };
     }]);
 
-    seagrass.controller("PatternController", ['$scope', '$http', '$log', function ($scope, $http, $log) {
+    seagrass.controller("PatternController", ['$scope', '$http', '$log', 'HttpService', function ($scope, $http, $log, HttpService) {
         $scope.patterns = Array.apply(null, Array(patternRange)).map(function (_, i) {return i;});
 
         $scope.chosen_pattern = defaultPattern;
@@ -286,20 +294,20 @@ var intensityDefault = 2;
         $scope.blue = 0;
 
         $scope.submit = function() {
-            $http.put(backend + '/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
+            HttpService.post('/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
                 '&red=' + $scope.red + '&green=' + $scope.green + '&blue=' + $scope.blue + '&speed=' + $scope.speed);
         };
     }]);
 
-    seagrass.controller("ChosenSensorController", ['$scope', '$http', '$log', 'CachedService', function ($scope, $http, $log, CachedService) {
+    seagrass.controller("ChosenSensorController", ['$scope', '$http', '$log', 'CachedService', 'HttpService', function ($scope, $http, $log, CachedService, HttpService) {
         $scope.chosen_sensor = CachedService.get();
 
         $scope.filterLength = 0;
         $scope.threshold = 0;
 
         $scope.submit = function() {
-            $http.post(backend + '/sensor/' + $scope.chosen_sensor + '?threshold=' + $scope.threshold);
-            $http.post(backend + '/sensor/' + $scope.chosen_sensor + '?filterLength=' + $scope.filterLength);
+            HttpService.post('/sensor/' + $scope.chosen_sensor + '?threshold=' + $scope.threshold);
+            HttpService.post('/sensor/' + $scope.chosen_sensor + '?filterLength=' + $scope.filterLength);
         };
 
         CachedService.getSensors(function(data) {

@@ -18,6 +18,10 @@
         <script type="text/javascript" src="js/app.js"></script>
     </head>
     <body>
+        <ons-modal var="checkmodal">
+            <i class="fa fa-check"></i>
+        </ons-modal>
+
         <ons-modal var="errormodal" ng-controller="ErrorController">
             <i class="fa fa-warning"></i>
             <br><br>
@@ -67,7 +71,7 @@
 
                         <div style="font-size: 12px" ng-show="members.length > 0">
                            <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
-                            <div ng-repeat="member in members">
+                            <div ng-repeat="member in members | orderBy:'name'">
                                 <ons-row>
                                     <ons-col><strong>{{member.name}}</strong></ons-col>
                                     <ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>
@@ -229,7 +233,7 @@
             <div ng-controller="OutOfBatteryController">
             <div class="margined" style="font-size: 12px" ng-show="outOfBattery.length > 0">
                 <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
-                <div ng-repeat="member in outOfBattery | orderBy:battery:reverse">
+                <div ng-repeat="member in outOfBattery | orderBy:'battery':reverse">
                     <ons-row>
                         <ons-col><strong>{{member.name}}</strong></ons-col>
                         <ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>
