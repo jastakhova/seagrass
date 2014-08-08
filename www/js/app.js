@@ -12,6 +12,12 @@ var intensityMin = 1;
 var intensityMax = 5;
 var intensityDefault = 2;
 
+var historyDataPeriod = 360;
+var historyXTicks = historyDataPeriod / 60;
+var historyCPURange = 100;
+var historyMemoryRange = 100;
+var historyBatteryRange = 100;
+
 (function() {
     var seagrass = angular.module("seagrass", ['onsen']).
         service('Util', function() {
@@ -37,11 +43,19 @@ var intensityDefault = 2;
            };
         }).
         service('HttpService', function($http, ErrorService) {
+            var callback = function(op) {
+               op.success(function() {
+                   checkmodal.show();
+                   setTimeout('checkmodal.hide()', 700);
+               }).error(ErrorService.errorCallback);
+            };
+
             this.post = function(url) {
-                $http.post(backend + url).success(function() {
-                    checkmodal.show();
-                    setTimeout('checkmodal.hide()', 700);
-                }).error(ErrorService.errorCallback);
+                callback($http.post(backend + url));
+            };
+
+            this.put = function(url) {
+                callback($http.put(backend + url));
             };
         }).
         service('LastUpdateService', function($http, $log, Util, ErrorService) {
@@ -147,6 +161,75 @@ var intensityDefault = 2;
             this.batteryFilter = function (member) {
                 return member.battery < batteryThreshold;
             };
+        }).service('GraphService', function($log) {
+            var home = this;
+            home.graph = [];
+
+            this.drawGraph = function(data, yrange, metric) {
+                /* implementation heavily influenced by http://bl.ocks.org/1166403 */
+
+                // define dimensions of graph
+                var m = [20, 20, 20, 35]; // margins
+                var w = 300 - m[1] - m[3]; // width
+                var h = 180 - m[0] - m[2]; // height
+
+                // X scale will fit all values from data[] within pixels 0-w
+                var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
+                // Y scale will fit values from 0-10 within pixels h-0 (Note the inverted domain for the y-scale: bigger is up!)
+                var y = d3.scale.linear().domain([0, yrange]).range([h, 0]);
+                // automatically determining max range can work something like this
+                // var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
+
+                // create a line function that can convert data[] into x and y points
+                var line = d3.svg.line()
+                    // assign the X function to plot our line as we wish
+                    .x(function(d,i) {
+                        // return the X coordinate where we want to plot this datapoint
+                        return x(i);
+                    })
+                    .y(function(d) {
+                        // return the Y coordinate where we want to plot this datapoint
+                        return y(d);
+                    });
+
+                if (!home.graph[metric]) {
+                    // Add an SVG element with the desired dimensions and margin.
+                    var graph = d3.select("#" + metric + "Graph").append("svg:svg")
+                        .attr("width", w + m[1] + m[3])
+                        .attr("height", h + m[0] + m[2])
+                        .append("svg:g")
+                        .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+                    var xTicks = [];
+                    for (var i = 0; i <= 360; i+=60) {
+                        xTicks.push(i);
+                    }
+
+                    // create xAxis
+                    var xAxis = d3.svg.axis().scale(x).tickValues(xTicks).tickFormat(function(i) {return Math.floor(i / 60) + "h";});
+                    // Add the x-axis.
+                    graph.append("svg:g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + h + ")")
+                        .call(xAxis);
+
+
+                    // create left yAxis
+                    var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
+                    // Add the y-axis to the left
+                    graph.append("svg:g")
+                        .attr("class", "y axis")
+                        .attr("transform", "translate(-5,0)")
+                        .call(yAxisLeft);
+
+                    // Add the line by appending an svg:path element with the data line we created above
+                    // do this AFTER the axes above so that the line is above the tick-lines
+                    home.graph[metric] = graph.append("svg:path");
+                    home.graph[metric].attr("d", line(data));
+                } else {
+                    home.graph[metric].attr("d", line(data));
+                }
+            };
         });
 
     seagrass.controller("MetricsController", [function () {
@@ -203,7 +286,7 @@ var intensityDefault = 2;
         });
     }]);
 
-    seagrass.controller("ComputerController", ['$scope', '$http', '$log', '$q', 'History', 'Util', 'LastUpdateService', function ($scope, $http, $log, $q, History, Util, LastUpdateService) {
+    seagrass.controller("ComputerController", ['$scope', '$http', '$log', '$q', 'History', 'Util', 'LastUpdateService', "GraphService", function ($scope, $http, $log, $q, History, Util, LastUpdateService, GraphService) {
         $scope.entries = [];
 
         var minute = 60*1000;
@@ -226,6 +309,19 @@ var intensityDefault = 2;
                         var entry = {cpu : data[0][i], battery : data[1][i], memory: data[2][i], time : tick};
                         $scope.entries.push(entry);
                     }
+
+                    if (data[0].length < historyDataPeriod)
+                    {
+                        var initialLength = data[0].length;
+                        for (var i = 0; i < historyDataPeriod - initialLength; i++)
+                        {
+                            data[0].push(Math.floor((Math.random() * 100) + 1));
+                        }
+                    }
+
+                    GraphService.drawGraph(data[0], historyCPURange, "cpu");
+                    GraphService.drawGraph(data[0], historyCPURange, "memory");
+                    GraphService.drawGraph(data[0], historyCPURange, "battery");
                 });
         };
 
@@ -246,15 +342,15 @@ var intensityDefault = 2;
 
     seagrass.controller("ControlController", ['$scope', '$http', '$log', 'CachedService', 'HttpService', function ($scope, $http, $log, CachedService, HttpService) {
         $scope.startup = function() {
-            HttpService.post('/startup');
+            HttpService.put('/startup');
         };
 
         $scope.restart = function() {
-            HttpService.post('/restart');
+            HttpService.put('/restart');
         };
 
         $scope.shutdown = function() {
-            HttpService.post('/shutdown');
+            HttpService.put('/shutdown');
         };
 
         $scope.chosen_sensor = CachedService.get();
@@ -294,7 +390,7 @@ var intensityDefault = 2;
         $scope.blue = 0;
 
         $scope.submit = function() {
-            HttpService.post('/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
+            HttpService.put('/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
                 '&red=' + $scope.red + '&green=' + $scope.green + '&blue=' + $scope.blue + '&speed=' + $scope.speed);
         };
     }]);
@@ -306,8 +402,8 @@ var intensityDefault = 2;
         $scope.threshold = 0;
 
         $scope.submit = function() {
-            HttpService.post('/sensor/' + $scope.chosen_sensor + '?threshold=' + $scope.threshold);
-            HttpService.post('/sensor/' + $scope.chosen_sensor + '?filterLength=' + $scope.filterLength);
+            HttpService.put('/sensor/' + $scope.chosen_sensor + '?threshold=' + $scope.threshold);
+            HttpService.put('/sensor/' + $scope.chosen_sensor + '?filterLength=' + $scope.filterLength);
         };
 
         CachedService.getSensors(function(data) {

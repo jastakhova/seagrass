@@ -16,6 +16,7 @@
 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/d3.min.js"></script>
     </head>
     <body>
         <ons-modal var="checkmodal">
@@ -129,20 +130,29 @@
                             </ons-col>
                         </ons-row>
                         <div style="font-size: 12px" ng-show="entries.length > 0">
-                            <strong class="margined"><ons-row><ons-col></ons-col>
-                                <ons-col>CPU</ons-col>
-                                <ons-col>Battery</ons-col>
-                                <ons-col>Memory</ons-col>
-                            </ons-row></strong>
                             <ons-scroller>
-                            <div ng-repeat="entry in entries">
-                                <ons-row>
-                                    <ons-col><strong>{{entry.time}}</strong></ons-col>
-                                    <ons-col><div style="text-align: center">{{entry.cpu}}</div></ons-col>
-                                    <ons-col>{{entry.battery}}</ons-col>
-                                    <ons-col>{{entry.memory}}</ons-col>
-                                </ons-row>
-                            </div>
+                                <div><strong>CPU</strong></div>
+                                <div id="cpuGraph" class="cpuGraph" style=""></div>
+                                <br/>
+                                <div><strong>Memory</strong></div>
+                                <div id="memoryGraph" class="memoryGraph" style=""></div>
+                                <br/>
+                                <div><strong>Battery</strong></div>
+                                <div id="batteryGraph" class="batteryGraph" style=""></div>
+
+                                <strong class="margined"><ons-row><ons-col></ons-col>
+                                    <ons-col>CPU</ons-col>
+                                    <ons-col>Memory</ons-col>
+                                    <ons-col>Battery</ons-col>
+                                </ons-row></strong>
+                                <div ng-repeat="entry in entries">
+                                    <ons-row>
+                                        <ons-col><strong>{{entry.time}}</strong></ons-col>
+                                        <ons-col><div style="text-align: center">{{entry.cpu}}</div></ons-col>
+                                        <ons-col>{{entry.memory}}</ons-col>
+                                        <ons-col>{{entry.battery}}</ons-col>
+                                    </ons-row>
+                                </div>
                             </ons-scroller>
                         </div>
                     </div>

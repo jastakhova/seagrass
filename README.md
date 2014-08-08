@@ -23,13 +23,25 @@ To run from CL:
 
 ![You will get this first screen when running this app](https://github.com/jastakhova/seagrass/blob/master/img/2014-08-05_0758.png "First screen")
 
+## Emulator history graphs view
+
+![Emulator history graphs view](https://github.com/jastakhova/seagrass/blob/master/img/2014-08-07_2349.png "History graphs screen")
+
+
 ## TODO
 
- * Graphs for history (sparklines)
  * Map for geolocations of members (d3)
+ * Use pattern names from GET /pattern/names when it's ready
  * Make data tables nicer (like in twitter bootstrap)
  * Center range inputs in pattern page
  * Configurable ordering in data tables
  * Colored battery levels
  * probably smth else - I left my TODO paper somewhere
  * Refresh could show progress
+
+ ## Problems
+
+ * Control requests (PUT, POST) doesn't work in browser (because of not configured CORS headers at backend), but seem to work in the emulator
+ * Sensor PUT/POST still returns 405, as only OPTIONS is allowed
+ * url and some properties are still hardcoded
+ * history graphs use generated data for missed time (right now I have 4 real points from 360 expected). Mock data generation should be removed
