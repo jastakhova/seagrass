@@ -398,10 +398,6 @@ var mapMargin = 0.1;
     }]);
 
     seagrass.controller("ControlController", ['$scope', '$http', '$log', 'CachedService', 'HttpService', function ($scope, $http, $log, CachedService, HttpService) {
-        $scope.startup = function() {
-            HttpService.put('/startup');
-        };
-
         $scope.restart = function() {
             HttpService.put('/restart');
         };
