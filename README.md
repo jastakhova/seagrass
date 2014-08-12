@@ -30,18 +30,76 @@ To run from CL:
 
 ## TODO
 
- * Map for geolocations of members (d3)
- * Use pattern names from GET /pattern/names when it's ready
- * Make data tables nicer (like in twitter bootstrap)
+ * Map for geolocations of members (d3), use existing points for calculating the borders with 10% margin, GPS for showing current location, extra circle for selected, each point will have id + color
+ * Use pattern names from GET /pattern/names when it's ready, sort patterns in alphabetical order
+ * set image for the app
+ * add field heartbeatAge to the member table (the number of seconds since we heard from that tower)
+ * Change ranges: speed, intensity 0-255, default 128, cpu/memory 0-100, battery 10-15, filterLength/threshold 1-255. Show the exact number to the right
+ * Make data tables nicer (like in twitter bootstrap). Lat/lon 3 dec symbols after point, 3 first letters in pattern name
+ * patternScreen: + modDelay (0-60)
  * Center range inputs in pattern page
- * Configurable ordering in data tables
- * Colored battery levels
- * probably smth else - I left my TODO paper somewhere
- * Refresh could show progress
+ * Configurable ordering in data tables (!)
+ * configurable backend urls (10.0.1.53:8080, 192.168.1.101:8080 (def), localhost:8080, heroku)
+ * set parameters for current pattern (GET /pattern/current)
+ * Colored battery levels using gradient. Remove out of battery media from the first screen
+ * History graphs can be smaller at startup
 
  ## Problems
 
- * Control requests (PUT, POST) doesn't work in browser (because of not configured CORS headers at backend), but seem to work in the emulator
  * Sensor PUT/POST still returns 405, as only OPTIONS is allowed
- * url and some properties are still hardcoded
  * history graphs use generated data for missed time (right now I have 4 real points from 360 expected). Mock data generation should be removed
+ * for sensor-1 only 1 range is showing
+ * after refresh and clicking control history graphs were not showing
+ * Control requests (PUT, POST) doesn't work in browser (because of not configured CORS headers at backend), but seem to work in the emulator
+
+ ## Auxiliary. Gradient map
+
+  if (currentVoltage < 6.2) {
+
+         ofSetColor(165, 0, 38);
+
+     } else if (currentVoltage < 6.8) {
+
+         ofSetColor(215,48,39);
+
+     } else if (currentVoltage < 7.0) {
+
+         ofSetColor(244,109,67);
+
+     } else if (currentVoltage < 7.05) {
+
+         ofSetColor(253,174,97);
+
+     } else if (currentVoltage < 7.1) {
+
+         ofSetColor(254,224,139);
+
+     } else if (currentVoltage < 7.15) {
+
+         ofSetColor(255,255,191);
+
+     } else if (currentVoltage < 7.4) {
+
+         ofSetColor(217,239,139);
+
+     } else if (currentVoltage < 7.6) {
+
+         ofSetColor(166,217,106);
+
+     } else if (currentVoltage < 7.8) {
+
+         ofSetColor(102,189,99);
+
+     } else if (currentVoltage < 8.0) {
+
+         ofSetColor(26,152,80);
+
+     } else {
+
+         ofSetColor(0,104,55);
+
+     }
+
+## Auxiliary. Gradient map
+
+![Image for app](https://github.com/jastakhova/seagrass/blob/master/img/seagrass.png "Image for app")
