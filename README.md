@@ -34,9 +34,10 @@ To run from CL:
  * Use pattern names from GET /pattern/names when it's ready, sort patterns in alphabetical order
  * set image for the app
  * add field heartbeatAge to the member table (the number of seconds since we heard from that tower)
+ * add field throttle to sensor, a default value of 100 and a range of 0 - 1000
  * Change ranges: speed, intensity 0-255, default 128, cpu/memory 0-100, battery 10-15, filterLength/threshold 1-255. Show the exact number to the right
  * Make data tables nicer (like in twitter bootstrap). 3 first letters in pattern name
- * patternScreen: + modDelay (0-60)
+ * patternScreen: + modDelay (0-15)
  * Center range inputs in pattern page
  * Configurable ordering in data tables (!)
  * configurable backend urls (10.0.1.53:8080, 192.168.1.101:8080 (def), localhost:8080, heroku)
