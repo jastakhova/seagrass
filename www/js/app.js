@@ -154,7 +154,7 @@ var mapMargin = 0.1;
                     LastUpdateService.get(backend + '/members', function(data) {
                         callback(data.collection);
                         home.members = data.collection;
-                    }, /*function(data, status) {},*/ "members");
+                    }, "members");
                 } else {
                     callback(home.members);
                 }
@@ -236,10 +236,9 @@ var mapMargin = 0.1;
         }).service('MapService', function($log) {
             var home = this;
 
-            this.drawMap = function(data) {
+            this.drawMap = function(names, lats, lons) {
                 // data that you want to plot, I've used separate arrays for x and y values
-                var xdata = [-120.12332153320312, -120.12332153320312, -119.12332153320312, -120.12332153320312],
-                    ydata = [39.123321533203125, 40.123321533203125, 40.123321533203125, 40.123321533203125];
+                var xdata = lons, ydata = lats;
 
                 // size and margins for the chart
                 var margin = {top: 20, right: 20, bottom: 20, left: 20}
@@ -402,6 +401,10 @@ var mapMargin = 0.1;
             HttpService.put('/restart');
         };
 
+        $scope.reboot = function() {
+            HttpService.put('/reboot');
+        };
+
         $scope.shutdown = function() {
             HttpService.put('/shutdown');
         };
@@ -472,8 +475,13 @@ var mapMargin = 0.1;
         });
     }]);
 
-    seagrass.controller("MapController", ['$scope', 'MapService', function ($scope, MapService) {
-        MapService.drawMap();
+    seagrass.controller("MapController", ['$scope', 'MapService', 'CachedService', function ($scope, MapService, CachedService) {
+        CachedService.getMembers(function(data) {
+            MapService.drawMap(
+                data.map(function(member) {return member.name;}),
+                data.map(function(member) {return member.lat;}),
+                data.map(function(member) {return member.lon;}));
+        });
     }]);
 
     seagrass.controller("ErrorController", ['$scope', '$log', 'ErrorService', function($scope, $log, ErrorService) {

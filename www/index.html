@@ -167,8 +167,9 @@
                     <ons-list ng-controller="ControlController">
                         <ons-list-item>
                             <div class="margined">
-                                <button class="button" ng-click="restart()">Restart</button>
                                 <button class="button" ng-click="shutdown()">Shutdown</button>
+                                <button class="button" ng-click="restart()">Restart</button>
+                                <button class="button" ng-click="reboot()">Reboot</button>
                             </div>
                         </ons-list-item>
                         <ons-list-item modifier="chevron" ng-click="controlNavigator.pushPage('pat.html', { animation : 'slide' } )">
