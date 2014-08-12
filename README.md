@@ -30,18 +30,18 @@ To run from CL:
 
 ## TODO
 
- * Map for geolocations of members (d3), use existing points for calculating the borders with 10% margin, GPS for showing current location, extra circle for selected, each point will have id + color
+ * Map for geolocations of members (d3), GPS for showing current location (http://docs.phonegap.com/en/2.0.0/cordova_geolocation_geolocation.md.html), extra circle for selected, each point will have id + color
  * Use pattern names from GET /pattern/names when it's ready, sort patterns in alphabetical order
  * set image for the app
  * add field heartbeatAge to the member table (the number of seconds since we heard from that tower)
  * Change ranges: speed, intensity 0-255, default 128, cpu/memory 0-100, battery 10-15, filterLength/threshold 1-255. Show the exact number to the right
- * Make data tables nicer (like in twitter bootstrap). Lat/lon 3 dec symbols after point, 3 first letters in pattern name
+ * Make data tables nicer (like in twitter bootstrap). 3 first letters in pattern name
  * patternScreen: + modDelay (0-60)
  * Center range inputs in pattern page
  * Configurable ordering in data tables (!)
  * configurable backend urls (10.0.1.53:8080, 192.168.1.101:8080 (def), localhost:8080, heroku)
  * set parameters for current pattern (GET /pattern/current)
- * Colored battery levels using gradient. Remove out of battery media from the first screen
+ * Colored battery levels using gradient
  * History graphs can be smaller at startup
 
  ## Problems
@@ -100,6 +100,6 @@ To run from CL:
 
      }
 
-## Auxiliary. Gradient map
+## Auxiliary. App image
 
 ![Image for app](https://github.com/jastakhova/seagrass/blob/master/img/seagrass.png "Image for app")

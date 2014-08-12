@@ -62,14 +62,6 @@
                             </ons-col>
                         </ons-row>
 
-                        <ons-list ng-show="(members | filter:batteryFilter).length > 0" class="vertically-margined">
-                            <ons-list-item modifier="chevron" ng-click="membersNavigator.pushPage('outOfBattery.html', { animation : 'slide' } )">
-                                <ons-row>
-                                    <ons-col class="left">Out of battery : {{(members.members | filter:members.batteryFilter).length}}</ons-col>
-                                </ons-row>
-                            </ons-list-item>
-                        </ons-list>
-
                         <div style="font-size: 12px" ng-show="members.length > 0">
                            <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
                             <ons-scroller>
@@ -78,12 +70,21 @@
                                     <ons-col><strong>{{member.name}}</strong></ons-col>
                                     <ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>
                                     <ons-col>{{member.battery | number : 1}}</ons-col>
-                                    <ons-col>{{member.lat}}</ons-col>
-                                    <ons-col>{{member.lon}}</ons-col>
+                                    <ons-col>{{member.lat | number : 3}}</ons-col>
+                                    <ons-col>{{member.lon | number : 3}}</ons-col>
                                 </ons-row>
                             </div>
                             </ons-scroller>
                         </div>
+                        <br/>
+
+                        <ons-list>
+                            <ons-list-item modifier="chevron" ng-click="membersNavigator.pushPage('map.html', { animation : 'slide' } )">
+                                <ons-row>
+                                    <ons-col class="left">Show map</ons-col>
+                                </ons-row>
+                            </ons-list-item>
+                        </ons-list>
                     </div>
                 </div>
 
@@ -243,26 +244,15 @@
             </div>
         </script>
 
-        <script type="text/ons-template" id="outOfBattery.html">
+        <script type="text/ons-template" id="map.html">
             <ons-toolbar>
                 <div class="left"><ons-back-button>Back</ons-back-button></div>
-                <div class="center">Out of battery</div>
+                <div class="center">Map</div>
             </ons-toolbar>
-            <div ng-controller="OutOfBatteryController">
-            <div class="margined" style="font-size: 12px" ng-show="outOfBattery.length > 0">
-                <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
-                <ons-scroller>
-                <div ng-repeat="member in outOfBattery | orderBy:'battery':reverse">
-                    <ons-row>
-                        <ons-col><strong>{{member.name}}</strong></ons-col>
-                        <ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>
-                        <ons-col>{{member.battery | number : 1}}</ons-col>
-                        <ons-col>{{member.lat}}</ons-col>
-                        <ons-col>{{member.lon}}</ons-col>
-                    </ons-row>
+            <div ng-controller="MapController">
+                <div id="map"  class='map margined'>
+                    <!-- /the chart goes here -->
                 </div>
-                </ons-scroller>
-            </div>
             </div>
         </script>
    </body>

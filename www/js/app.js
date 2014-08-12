@@ -18,6 +18,8 @@ var historyCPURange = 100;
 var historyMemoryRange = 100;
 var historyBatteryRange = 100;
 
+var mapMargin = 0.1;
+
 (function() {
     var seagrass = angular.module("seagrass", ['onsen']).
         service('Util', function() {
@@ -166,6 +168,7 @@ var historyBatteryRange = 100;
             home.graph = [];
 
             this.drawGraph = function(data, yrange, metric) {
+                /* taken from https://gist.github.com/benjchristensen/2579599 */
                 /* implementation heavily influenced by http://bl.ocks.org/1166403 */
 
                 // define dimensions of graph
@@ -229,6 +232,60 @@ var historyBatteryRange = 100;
                 } else {
                     home.graph[metric].attr("d", line(data));
                 }
+            };
+        }).service('MapService', function($log) {
+            var home = this;
+
+            this.drawMap = function(data) {
+                // data that you want to plot, I've used separate arrays for x and y values
+                var xdata = [-120.12332153320312, -120.12332153320312, -119.12332153320312, -120.12332153320312],
+                    ydata = [39.123321533203125, 40.123321533203125, 40.123321533203125, 40.123321533203125];
+
+                // size and margins for the chart
+                var margin = {top: 20, right: 20, bottom: 20, left: 20}
+                    , width = 300 - margin.left - margin.right
+                    , height = 300 - margin.top - margin.bottom;
+
+                // x and y scales, I've used linear here but there are other options
+                // the scales translate data values to pixel values for you
+                var xMin = d3.min(xdata);
+                var xMax = d3.max(xdata);
+                var xMargin = mapMargin * (xMax - xMin);
+                var x = d3.scale.linear()
+                    .domain([xMin - xMargin, xMax + xMargin])  // the range of the values to plot
+                    .range([ 0, width ]);        // the pixel range of the x-axis
+
+                var yMin = d3.min(ydata);
+                var yMax = d3.max(ydata);
+                var yMargin = mapMargin * (yMax - yMin);
+                var y = d3.scale.linear()
+                    .domain([yMin - yMargin, yMax + yMargin])
+                    .range([ height, 0 ]);
+
+                // the chart object, includes all margins
+                var chart = d3.select('#map')
+                    .append('svg:svg')
+                    .attr('width', width + margin.right + margin.left)
+                    .attr('height', height + margin.top + margin.bottom)
+                    .attr('class', 'chart')
+
+                // the main object where the chart and axis will be drawn
+                var main = chart.append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                    .attr('width', width)
+                    .attr('height', height)
+                    .attr('class', 'main')
+
+                // draw the graph object
+                var g = main.append("svg:g");
+
+                g.selectAll("scatter-dots")
+                    .data(ydata)  // using the values in the ydata array
+                    .enter().append("svg:circle")  // create a new circle for each value
+                    .attr("cy", function (d) { return y(d); } ) // translate y value to a pixel
+                    .attr("cx", function (d,i) { return x(xdata[i]); } ) // translate x value
+                    .attr("r", 10) // radius of circle
+                    .style("opacity", 0.6); // opacity of circle
             };
         });
 
@@ -419,12 +476,8 @@ var historyBatteryRange = 100;
         });
     }]);
 
-    seagrass.controller("OutOfBatteryController", ['$scope', 'CachedService', function ($scope, CachedService) {
-        $scope.outOfBattery = [];
-
-        CachedService.getMembers(function(data) {
-            $scope.outOfBattery = data.filter(CachedService.batteryFilter);
-        });
+    seagrass.controller("MapController", ['$scope', 'MapService', function ($scope, MapService) {
+        MapService.drawMap();
     }]);
 
     seagrass.controller("ErrorController", ['$scope', '$log', 'ErrorService', function($scope, $log, ErrorService) {

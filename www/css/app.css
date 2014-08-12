@@ -10,7 +10,7 @@
     width: 270px;
 }
 
-/*d3 CSS*/
+/*d3 CSS for history graphs*/
 
 path {
     stroke: steelblue;
@@ -37,4 +37,24 @@ path {
 .y.axis line, .y.axis path {
     fill: none;
     stroke: #000;
+}
+
+/* d3 CSS for map */
+
+.chart {
+
+}
+
+.main text {
+    font: 10px sans-serif;
+}
+
+.axis line, .axis path {
+    shape-rendering: crispEdges;
+    stroke: black;
+    fill: none;
+}
+
+circle {
+    fill: steelblue;
 }
