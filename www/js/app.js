@@ -236,9 +236,24 @@ var mapMargin = 0.1;
         }).service('MapService', function($log) {
             var home = this;
 
-            this.drawMap = function(names, lats, lons) {
+            this.drawMap = function(members) {
                 // data that you want to plot, I've used separate arrays for x and y values
-                var xdata = lons, ydata = lats;
+                var xdata = members.map(function(member) {return member.lon;}),
+                    ydata = members.map(function(member) {return member.lat;});
+
+                var names = members.map(function(member) {return member.name;});
+                var batteryLevels = members.map(function(member) {return member.battery;});
+                var gradient = [6.2, 6.8, 7.0, 7.05, 7.1, 7.15, 7.4, 7.6, 7.8, 8.0];
+
+                var chooseColorClass = function(battery) {
+                    for (var i = 0; i < gradient.length; i++) {
+                        if (battery < gradient[i])
+                        {
+                            return "color" + (i + 1);
+                        }
+                    }
+                    return "color" + (gradient.length + 1);
+                };
 
                 // size and margins for the chart
                 var margin = {top: 20, right: 20, bottom: 20, left: 20}
@@ -278,13 +293,21 @@ var mapMargin = 0.1;
                 // draw the graph object
                 var g = main.append("svg:g");
 
-                g.selectAll("scatter-dots")
+                var map = g.selectAll("scatter-dots")
                     .data(ydata)  // using the values in the ydata array
-                    .enter().append("svg:circle")  // create a new circle for each value
+                    .enter();
+                map.append("svg:circle")  // create a new circle for each value
                     .attr("cy", function (d) { return y(d); } ) // translate y value to a pixel
                     .attr("cx", function (d,i) { return x(xdata[i]); } ) // translate x value
                     .attr("r", 10) // radius of circle
+                    .attr("class", function(d, i) {return chooseColorClass(batteryLevels[i]);})
                     .style("opacity", 0.6); // opacity of circle
+                map.append("text")
+                    .attr("x", function(d, i) { return x(xdata[i]); })
+                    .attr("y", function(d) { return y(d) + 4; })
+                    .attr("text-anchor", "middle")
+                    .text(function(d, i) {return names[i];})
+                    .attr("class", "dot-id");
             };
         });
 
@@ -477,10 +500,7 @@ var mapMargin = 0.1;
 
     seagrass.controller("MapController", ['$scope', 'MapService', 'CachedService', function ($scope, MapService, CachedService) {
         CachedService.getMembers(function(data) {
-            MapService.drawMap(
-                data.map(function(member) {return member.name;}),
-                data.map(function(member) {return member.lat;}),
-                data.map(function(member) {return member.lon;}));
+            MapService.drawMap(data);
         });
     }]);
 

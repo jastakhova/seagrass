@@ -45,10 +45,6 @@ path {
 
 }
 
-.main text {
-    font: 10px sans-serif;
-}
-
 .axis line, .axis path {
     shape-rendering: crispEdges;
     stroke: black;
@@ -56,5 +52,45 @@ path {
 }
 
 circle {
-    fill: steelblue;
+}
+
+.dot-id {
+    font-size: 12px;
+    fill: black;
+}
+
+/* color gradient */
+
+.color1 {
+  fill: rgb(165, 0, 38);
+}
+.color2 {
+    fill: rgb(215,48,39);
+}
+.color3 {
+    fill: rgb(244,109,67);
+}
+.color4 {
+    fill: rgb(253,174,97);
+}
+.color5 {
+    fill: rgb(254,224,139);
+}
+.color6 {
+    fill: rgb(255,255,191);
+}
+.color7 {
+    fill: rgb(217,239,139);
+}
+.color8 {
+    fill: rgb(166,217,106);
+}
+.color9 {
+    fill: rgb(102,189,99);
+}
+.color10 {
+    fill: rgb(26,152,80);
+}
+.color11 {
+    fill: rgb(0,104,55);
 }
