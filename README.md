@@ -5,6 +5,7 @@ This is an iPhone control app for Burning Man project https://www.facebook.com/s
 	> git clone git@github.com:jastakhova/seagrass.git
 	> cd seagrass
 	> cordova platform add ios
+	> cordova plugin add org.apache.cordova.geolocation
 
 It creates this structure:
 
@@ -30,20 +31,20 @@ To run from CL:
 
 ## TODO
 
- * Map for geolocations of members (d3), GPS for showing current location (http://docs.phonegap.com/en/2.0.0/cordova_geolocation_geolocation.md.html), extra circle for selected, each point will have id + color
- * Use pattern names from GET /pattern/names when it's ready, sort patterns in alphabetical order
- * set image for the app
- * add field heartbeatAge to the member table (the number of seconds since we heard from that tower)
- * add field throttle to sensor, a default value of 100 and a range of 0 - 1000
- * Change ranges: speed, intensity 0-255, default 128, cpu/memory 0-100, battery 10-15, filterLength/threshold 1-255. Show the exact number to the right
- * Make data tables nicer (like in twitter bootstrap). 3 first letters in pattern name
  * patternScreen: + modDelay (0-15)
+ * add field throttle to sensor, a default value of 100 and a range of 0 - 1000
+ * add field heartbeatAge to the member table (the number of seconds since we heard from that tower)
+ * Map for geolocations of members (d3), GPS for showing current location (http://docs.phonegap.com/en/2.0.0/cordova_geolocation_geolocation.md.html), extra circle for selected, each point will have id + color
+ * structure the project
+ * Change ranges: speed, intensity 0-255, default 128, cpu/memory 0-100, battery 10-15, filterLength/threshold 1-255. Show the exact number to the right
+ * Use pattern names from GET /pattern/names when it's ready, sort patterns in alphabetical order
+ * Make data tables nicer (like in twitter bootstrap). 3 first letters in pattern name
  * Center range inputs in pattern page
  * Configurable ordering in data tables (!)
- * configurable backend urls (10.0.1.53:8080, 192.168.1.101:8080 (def), localhost:8080, heroku)
  * set parameters for current pattern (GET /pattern/current)
- * Colored battery levels using gradient
  * History graphs can be smaller at startup
+ * set image for the app
+ * history should not be refreshed on backend url change but marked as needed to be refreshed
 
  ## Problems
 

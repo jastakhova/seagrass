@@ -94,3 +94,7 @@ circle {
 .color11 {
     fill: rgb(0,104,55);
 }
+
+circle .myself {
+    fill: #000000;
+}

@@ -1,4 +1,4 @@
-var backend = "http://thawing-hamlet-4746.herokuapp.com";
+var staticBackends = ["http://192.168.1.101:8080", "http://10.0.1.53:8080", "http://localhost:8080", "http://thawing-hamlet-4746.herokuapp.com"];
 var patternRange = 30;
 var batteryThreshold = 7;
 
@@ -22,6 +22,28 @@ var mapMargin = 0.1;
 
 (function() {
     var seagrass = angular.module("seagrass", ['onsen']).
+        service("StorageService", function() {
+           this.get = function(key) {
+               return window.localStorage.getItem(key);
+           };
+
+           this.set = function(key, value) {
+               window.localStorage.setItem(key, value);
+           };
+        }).
+        service("BackendService", function(StorageService) {
+            var home = this;
+
+            this.key = "backend";
+            this.getBackends = function() {
+                return staticBackends;
+            };
+
+            this.getBackend = function() {
+                var stored = StorageService.get(home.key);
+                return stored ? stored : home.getBackends()[0];
+            };
+        }).
         service('Util', function() {
             this.formatDate = function(date) {
                 return date.getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
@@ -44,7 +66,7 @@ var mapMargin = 0.1;
                home.listener = listener;
            };
         }).
-        service('HttpService', function($http, ErrorService) {
+        service('HttpService', function($http, ErrorService, BackendService) {
             var callback = function(op) {
                op.success(function() {
                    checkmodal.show();
@@ -53,11 +75,11 @@ var mapMargin = 0.1;
             };
 
             this.post = function(url) {
-                callback($http.post(backend + url));
+                callback($http.post(BackendService.getBackend() + url));
             };
 
             this.put = function(url) {
-                callback($http.put(backend + url));
+                callback($http.put(BackendService.getBackend() + url));
             };
         }).
         service('LastUpdateService', function($http, $log, Util, ErrorService) {
@@ -107,11 +129,11 @@ var mapMargin = 0.1;
                 }
             }
         }).
-        service('History', function($http, $q, $log, LastUpdateService, ErrorService) {
+        service('History', function($http, $q, $log, LastUpdateService, ErrorService, BackendService) {
             this.get = function(metric){
                 var deferred = $q.defer();
 
-                $http.get(backend + '/metrics/' + metric).success(function(data, status) {
+                $http.get(BackendService.getBackend() + '/metrics/' + metric).success(function(data, status) {
                     deferred.resolve(data.history);
                 }).error(function(data, status) {
                     deferred.reject(data);
@@ -121,7 +143,7 @@ var mapMargin = 0.1;
                 return deferred.promise;
             }
         }).
-        service('CachedService', function($http, $log, LastUpdateService) {
+        service('CachedService', function($http, $log, LastUpdateService, BackendService) {
             this.sensor = "";
             this.sensors = [];
             this.members = [];
@@ -139,7 +161,7 @@ var mapMargin = 0.1;
             this.getSensors = function(callback) {
                 if (home.sensors.length === 0)
                 {
-                    LastUpdateService.get(backend + '/metrics/sensors', function(data) {
+                    LastUpdateService.get(BackendService.getBackend() + '/metrics/sensors', function(data) {
                         callback(data.collection);
                         home.sensors = data.collection;
                     }, "sensors");
@@ -151,7 +173,7 @@ var mapMargin = 0.1;
             this.getMembers = function(callback) {
                 if (home.members.length === 0)
                 {
-                    LastUpdateService.get(backend + '/members', function(data) {
+                    LastUpdateService.get(BackendService.getBackend() + '/members', function(data) {
                         callback(data.collection);
                         home.members = data.collection;
                     }, "members");
@@ -160,10 +182,24 @@ var mapMargin = 0.1;
                 }
             }
 
+            this.clear = function() {
+                home.members = [];
+                home.sensors = [];
+            }
+
             this.batteryFilter = function (member) {
                 return member.battery < batteryThreshold;
             };
-        }).service('GraphService', function($log) {
+        }).
+        service("SetBackendService", function(StorageService, BackendService, CachedService, LastUpdateService) {
+            this.setBackend = function(value) {
+                StorageService.set(BackendService.key, value);
+                CachedService.clear();
+
+                LastUpdateService.refresh("cpu");
+            };
+        }).
+        service('GraphService', function($log) {
             var home = this;
             home.graph = [];
 
@@ -233,13 +269,29 @@ var mapMargin = 0.1;
                     home.graph[metric].attr("d", line(data));
                 }
             };
-        }).service('MapService', function($log) {
+        }).service("NavigationService", function($log) {
+          var home = this;
+
+          this.message = "def";
+
+//          navigator.geolocation.getCurrentPosition(function(position) {
+//            home.message = "ok";
+//            $log.info(position);
+//          }, function(error) {
+//            home.message = "not ok";
+//            $log.info(error)});
+
+        }).service('MapService', function($log, NavigationService) {
             var home = this;
 
             this.drawMap = function(members) {
                 // data that you want to plot, I've used separate arrays for x and y values
                 var xdata = members.map(function(member) {return member.lon;}),
                     ydata = members.map(function(member) {return member.lat;});
+
+                // TODO: should be set by navigation service
+                var lon = -119.5;
+                var lat = 39.5;
 
                 var names = members.map(function(member) {return member.name;});
                 var batteryLevels = members.map(function(member) {return member.battery;});
@@ -308,6 +360,13 @@ var mapMargin = 0.1;
                     .attr("text-anchor", "middle")
                     .text(function(d, i) {return names[i];})
                     .attr("class", "dot-id");
+
+//                home.cursor = g.append("svg:circle");
+//
+//                home.cursor.attr("cx", x(lon))
+//                    .attr("cy", y(lat))
+//                    .attr("r", 5)
+//                    .attr("class", "myself");
             };
         });
 
@@ -419,7 +478,16 @@ var mapMargin = 0.1;
         LastUpdateService.getGeneral(load, id);
     }]);
 
-    seagrass.controller("ControlController", ['$scope', '$http', '$log', 'CachedService', 'HttpService', function ($scope, $http, $log, CachedService, HttpService) {
+    seagrass.controller("ControlController",
+        ['$scope', '$http', '$log', 'CachedService', 'HttpService', 'BackendService', 'SetBackendService',
+            function ($scope, $http, $log, CachedService, HttpService, BackendService, SetBackendService) {
+        $scope.backends = BackendService.getBackends();
+        $scope.chosen_backend = BackendService.getBackend();
+
+        $scope.setBackend = function() {
+            SetBackendService.setBackend($scope.chosen_backend);
+        };
+
         $scope.restart = function() {
             HttpService.put('/restart');
         };
