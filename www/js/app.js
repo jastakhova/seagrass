@@ -4,13 +4,13 @@ var batteryThreshold = 7;
 
 var defaultPattern = 0;
 
-var speedMin = 1;
-var speedMax = 10;
-var speedDefault = 5;
+var speedMin = 0;
+var speedMax = 255;
+var speedDefault = 128;
 
-var intensityMin = 1;
-var intensityMax = 5;
-var intensityDefault = 2;
+var intensityMin = 0;
+var intensityMax = 255;
+var intensityDefault = 128;
 
 var modDelayDefault = 0;
 var modDelayMin = 0;
@@ -556,10 +556,12 @@ var mapMargin = 0.1;
 
         $scope.filterLength = 0;
         $scope.threshold = 0;
+        $scope.throttle = 100;
 
         $scope.submit = function() {
             HttpService.put('/sensor/' + $scope.chosen_sensor + '?threshold=' + $scope.threshold);
             HttpService.put('/sensor/' + $scope.chosen_sensor + '?filterLength=' + $scope.filterLength);
+            HttpService.put('/sensor/' + $scope.chosen_sensor + '?throttle=' + $scope.throttle);
         };
 
         CachedService.getSensors(function(data) {
@@ -568,6 +570,7 @@ var mapMargin = 0.1;
               {
                   $scope.threshold = sensor.threshold;
                   $scope.filterLength = sensor.filterLength;
+                  $scope.throttle = sensor.throttle;
               }
 
               return sensor;

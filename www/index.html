@@ -63,13 +63,22 @@
                         </ons-row>
 
                         <div style="font-size: 12px" ng-show="members.length > 0">
-                           <strong class="margined"><ons-row><ons-col></ons-col><ons-col>Pattern</ons-col><ons-col>Battery</ons-col><ons-col>Lat</ons-col><ons-col>Lon</ons-col></ons-row></strong>
+                           <strong class="margined"><ons-row>
+                               <ons-col></ons-col>
+                               <ons-col>Pattern</ons-col>
+                               <ons-col>Battery</ons-col>
+                               <ons-col>HBeat</ons-col>
+                               <ons-col>Lat</ons-col>
+                               <ons-col>Lon</ons-col>
+                           </ons-row></strong>
                             <ons-scroller>
                             <div ng-repeat="member in members | orderBy:'name'">
                                 <ons-row>
                                     <ons-col><strong>{{member.name}}</strong></ons-col>
-                                    <ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>
+                                    <ons-col>{{member.pattern}}</ons-col>
+                                    <!--<ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>-->
                                     <ons-col>{{member.battery | number : 1}}</ons-col>
+                                    <ons-col>{{member.heartbeatAge}}</ons-col>
                                     <ons-col>{{member.lat | number : 3}}</ons-col>
                                     <ons-col>{{member.lon | number : 3}}</ons-col>
                                 </ons-row>
@@ -242,11 +251,14 @@
             </ons-toolbar>
             <div class="margined">
                 <div class="margined" ng-show="filterLength > 0">
-                    Filter Length: <input ng-model="filterLength" min="1" max="2000" type="range" class="range long-range">
+                    Filter Length: <input ng-model="filterLength" min="1" max="255" type="range" class="range long-range">
                 </div>
-                <ons-list ng-show="threshold > 0">
+                <ons-list>
+                    <ons-list-item ng-show="threshold > 0">
+                        Threshold: <input ng-model="threshold" min="1" max="255" type="range" class="range long-range">
+                    </ons-list-item>
                     <ons-list-item>
-                        Threshold: <input ng-model="threshold" min="1" max="2000" type="range" class="range long-range">
+                        Throttle: <input ng-model="throttle" min="0" max="1000" type="range" class="range long-range">
                     </ons-list-item>
                 </ons-list>
                 <button class="button margined" ng-click="submit()">Submit</button>

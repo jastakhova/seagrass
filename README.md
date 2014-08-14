@@ -31,11 +31,10 @@ To run from CL:
 
 ## TODO
 
- * add field throttle to sensor, a default value of 100 and a range of 0 - 1000
- * add field heartbeatAge to the member table (the number of seconds since we heard from that tower)
- * Map for geolocations of members (d3), GPS for showing current location (http://docs.phonegap.com/en/2.0.0/cordova_geolocation_geolocation.md.html), extra circle for selected, each point will have id + color
+ * GPS for showing current location (http://docs.phonegap.com/en/2.0.0/cordova_geolocation_geolocation.md.html)
+ * extra circle for selected member on the map
  * structure the project
- * Change ranges: speed, intensity 0-255, default 128, cpu/memory 0-100, battery 10-15, filterLength/threshold 1-255. Show the exact number to the right
+ * Change ranges: cpu/memory 0-100, battery 10-15. Show the exact number to the right
  * Use pattern names from GET /pattern/names when it's ready, sort patterns in alphabetical order
  * Make data tables nicer (like in twitter bootstrap). 3 first letters in pattern name
  * Center range inputs in pattern page
