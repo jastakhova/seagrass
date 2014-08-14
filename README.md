@@ -31,7 +31,6 @@ To run from CL:
 
 ## TODO
 
- * patternScreen: + modDelay (0-15)
  * add field throttle to sensor, a default value of 100 and a range of 0 - 1000
  * add field heartbeatAge to the member table (the number of seconds since we heard from that tower)
  * Map for geolocations of members (d3), GPS for showing current location (http://docs.phonegap.com/en/2.0.0/cordova_geolocation_geolocation.md.html), extra circle for selected, each point will have id + color

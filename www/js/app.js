@@ -12,6 +12,10 @@ var intensityMin = 1;
 var intensityMax = 5;
 var intensityDefault = 2;
 
+var modDelayDefault = 0;
+var modDelayMin = 0;
+var modDelayMax = 15;
+
 var historyDataPeriod = 360;
 var historyXTicks = historyDataPeriod / 60;
 var historyCPURange = 100;
@@ -532,13 +536,18 @@ var mapMargin = 0.1;
         $scope.intensityMin = intensityMin;
         $scope.intensityMax = intensityMax;
 
+        $scope.modDelay = modDelayDefault;
+        $scope.modDelayMin = modDelayMin;
+        $scope.modDelayMax = modDelayMax;
+
         $scope.red = 0;
         $scope.green = 0;
         $scope.blue = 0;
 
         $scope.submit = function() {
             HttpService.put('/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
-                '&red=' + $scope.red + '&green=' + $scope.green + '&blue=' + $scope.blue + '&speed=' + $scope.speed);
+                '&red=' + $scope.red + '&green=' + $scope.green + '&blue=' + $scope.blue +
+                '&speed=' + $scope.speed + '&modDelay=' + $scope.modDelay);
         };
     }]);
 
