@@ -1,4 +1,4 @@
 platforms/ios
 plugins/ios.json
 .idea/workspace.xml
- plugins/org.apache.cordova.geolocation
+plugins/org.apache.cordova.geolocation
