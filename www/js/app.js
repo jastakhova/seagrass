@@ -151,6 +151,7 @@ var mapMargin = 0.1;
             this.sensor = "";
             this.sensors = [];
             this.members = [];
+            this.patterns = [];
 
             this.get = function() {
                 return this.sensor;
@@ -186,9 +187,22 @@ var mapMargin = 0.1;
                 }
             }
 
+            this.getPatterns = function(callback) {
+                if (home.patterns.length === 0)
+                {
+                    LastUpdateService.get(BackendService.getBackend() + '/pattern/names', function(data) {
+                        callback(data);
+                        home.patterns = data;
+                    }, "patterns");
+                } else {
+                    callback(home.patterns);
+                }
+            }
+
             this.clear = function() {
                 home.members = [];
                 home.sensors = [];
+                home.patterns = [];
             }
 
             this.batteryFilter = function (member) {
@@ -392,8 +406,14 @@ var mapMargin = 0.1;
 
         $scope.members = [];
 
-        CachedService.getMembers(function(data) {
-            $scope.members = data;
+        CachedService.getMembers(function(members) {
+
+            CachedService.getPatterns(function(patterns) {
+                $scope.members = members.map(function(member) {
+                    member.pattern = patterns[member.pattern];
+                    return member;
+                });
+            });
         });
 
         var id = "members";

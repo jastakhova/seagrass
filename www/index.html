@@ -75,7 +75,7 @@
                             <div ng-repeat="member in members | orderBy:'name'">
                                 <ons-row>
                                     <ons-col><strong>{{member.name}}</strong></ons-col>
-                                    <ons-col>{{member.pattern}}</ons-col>
+                                    <ons-col>{{member.pattern | limitTo : 3}}</ons-col>
                                     <!--<ons-col><div style="text-align: center">{{member.pattern}}</div></ons-col>-->
                                     <ons-col>{{member.battery | number : 1}}</ons-col>
                                     <ons-col>{{member.heartbeatAge}}</ons-col>

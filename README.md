@@ -36,7 +36,7 @@ To run from CL:
  * structure the project
  * Change range for battery to 10-15 (right now 0-15) ?
  * Use pattern names from GET /pattern/names when it's ready, sort patterns in alphabetical order
- * Make data tables nicer (like in twitter bootstrap). 3 first letters in pattern name
+ * Make data tables nicer (like in twitter bootstrap)
  * Configurable ordering in data tables (!)
  * set parameters for current pattern (GET /pattern/current)
  * History graphs can be smaller at startup
