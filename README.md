@@ -34,7 +34,7 @@ To run from CL:
  * GPS for showing current location (http://docs.phonegap.com/en/2.0.0/cordova_geolocation_geolocation.md.html)
  * extra circle for selected member on the map
  * structure the project
- * Change ranges: cpu/memory 0-100, battery 10-15
+ * Change range for battery to 10-15 (right now 0-15) ?
  * Use pattern names from GET /pattern/names when it's ready, sort patterns in alphabetical order
  * Make data tables nicer (like in twitter bootstrap). 3 first letters in pattern name
  * Configurable ordering in data tables (!)

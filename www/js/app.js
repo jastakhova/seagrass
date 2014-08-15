@@ -20,7 +20,7 @@ var historyDataPeriod = 360;
 var historyXTicks = historyDataPeriod / 60;
 var historyCPURange = 100;
 var historyMemoryRange = 100;
-var historyBatteryRange = 100;
+var historyBatteryRange = 15;
 
 var mapMargin = 0.1;
 
@@ -464,8 +464,8 @@ var mapMargin = 0.1;
 //                    }
 
                     GraphService.drawGraph(data[0], historyCPURange, "cpu");
-                    GraphService.drawGraph(data[0], historyCPURange, "memory");
-                    GraphService.drawGraph(data[0], historyCPURange, "battery");
+                    GraphService.drawGraph(data[1], historyMemoryRange, "memory");
+                    GraphService.drawGraph(data[2], historyBatteryRange, "battery");
                 });
         };
 
