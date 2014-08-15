@@ -166,8 +166,9 @@ var mapMargin = 0.1;
                 if (home.sensors.length === 0)
                 {
                     LastUpdateService.get(BackendService.getBackend() + '/metrics/sensors', function(data) {
-                        callback(data.collection);
-                        home.sensors = data.collection;
+						var collection = data.collection;
+                        callback(collection);
+                        home.sensors = collection;
                     }, "sensors");
                 } else {
                     callback(home.sensors);
@@ -178,8 +179,9 @@ var mapMargin = 0.1;
                 if (home.members.length === 0)
                 {
                     LastUpdateService.get(BackendService.getBackend() + '/members', function(data) {
-                        callback(data.collection);
-                        home.members = data.collection;
+						var collection = data.collection;
+                        callback(collection);
+                        home.members = collection;
                     }, "members");
                 } else {
                     callback(home.members);
@@ -274,47 +276,75 @@ var mapMargin = 0.1;
                 }
             };
         }).service("NavigationService", function($log) {
-          var home = this;
-
-          this.message = "def";
-
-//          navigator.geolocation.getCurrentPosition(function(position) {
-//            home.message = "ok";
-//            $log.info(position);
-//          }, function(error) {
-//            home.message = "not ok";
-//            $log.info(error)});
-
-        }).service('MapService', function($log, NavigationService) {
+            var home = this;
+/*
+		    this.watchPosition = function(callback) {
+				var lon = -119.5;
+				var lat = 39.5;
+				return setInterval(function() {
+					lon += 0.1;
+					lat += 0.1;
+					callback({lon:lon, lat:lat});
+				}, 1000);
+			};
+			this.stopWatchingPosition = function(token) {
+				clearInterval(token);
+			};
+  */
+  			this.watchPosition = function(callback) {
+				return navigator.geolocation.watchPosition(function(position) {
+					callback({lat: position.coords.latitude,
+					          lon: position.coords.longitude});
+				});
+			};
+			this.stopWatchingPosition = function(watchId) {
+				navigator.geolocation.clearWatch(watchId);	
+			};
+  		}).service('MapService', function($log) {
             var home = this;
 
-            this.drawMap = function(members) {
+			// size and margins for the chart
+			var margin = {top: 20, right: 20, bottom: 20, left: 20}
+				, width = 300 - margin.left - margin.right
+				, height = 300 - margin.top - margin.bottom;
+
+			this.prepareMap = function() {
+                // the chart object, includes all margins
+                var chart = d3.select('#map')
+                    .append('svg:svg')
+                    .attr('width', width + margin.right + margin.left)
+                    .attr('height', height + margin.top + margin.bottom)
+                    .attr('class', 'chart')
+
+                // the main object where the chart and axis will be drawn
+                var main = chart.append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                    .attr('width', width)
+                    .attr('height', height)
+                    .attr('class', 'main')
+
+                // draw the graph object
+                var g = main.append("svg:g").attr('class', 'graph');
+				home.graph = g;
+
+                home.cursor = g.append("svg:circle");
+			};
+
+            this.drawMap = function(members, position) {
                 // data that you want to plot, I've used separate arrays for x and y values
                 var xdata = members.map(function(member) {return member.lon;}),
                     ydata = members.map(function(member) {return member.lat;});
 
-                // TODO: should be set by navigation service
-                var lon = -119.5;
-                var lat = 39.5;
-
-                var names = members.map(function(member) {return member.name;});
-                var batteryLevels = members.map(function(member) {return member.battery;});
                 var gradient = [6.2, 6.8, 7.0, 7.05, 7.1, 7.15, 7.4, 7.6, 7.8, 8.0];
 
                 var chooseColorClass = function(battery) {
                     for (var i = 0; i < gradient.length; i++) {
-                        if (battery < gradient[i])
-                        {
+                        if (battery < gradient[i]) {
                             return "color" + (i + 1);
                         }
                     }
                     return "color" + (gradient.length + 1);
                 };
-
-                // size and margins for the chart
-                var margin = {top: 20, right: 20, bottom: 20, left: 20}
-                    , width = 300 - margin.left - margin.right
-                    , height = 300 - margin.top - margin.bottom;
 
                 // x and y scales, I've used linear here but there are other options
                 // the scales translate data values to pixel values for you
@@ -332,45 +362,35 @@ var mapMargin = 0.1;
                     .domain([yMin - yMargin, yMax + yMargin])
                     .range([ height, 0 ]);
 
-                // the chart object, includes all margins
-                var chart = d3.select('#map')
-                    .append('svg:svg')
-                    .attr('width', width + margin.right + margin.left)
-                    .attr('height', height + margin.top + margin.bottom)
-                    .attr('class', 'chart')
+				var g = home.graph;
 
-                // the main object where the chart and axis will be drawn
-                var main = chart.append('g')
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-                    .attr('width', width)
-                    .attr('height', height)
-                    .attr('class', 'main')
-
-                // draw the graph object
-                var g = main.append("svg:g");
-
-                var map = g.selectAll("scatter-dots")
-                    .data(ydata)  // using the values in the ydata array
-                    .enter();
-                map.append("svg:circle")  // create a new circle for each value
-                    .attr("cy", function (d) { return y(d); } ) // translate y value to a pixel
-                    .attr("cx", function (d,i) { return x(xdata[i]); } ) // translate x value
+                var map = g.selectAll(".scatter-dots")
+                    .data(members, function(d) { return d.name; });
+				map.exit().remove();
+				var dots = map.enter().append('svg:g').attr('class', 'scatter-dots');
+                dots.append("svg:circle");
+				dots.append("svg:text");
+				g.selectAll(".scatter-dots circle")
+                    .data(members, function(d) { return d.name; })
+                    .attr("cx", function (d) { return x(d.lon); } )
+                    .attr("cy", function (d) { return y(d.lat); } )
                     .attr("r", 10) // radius of circle
-                    .attr("class", function(d, i) {return chooseColorClass(batteryLevels[i]);})
+                    .attr("class", function(d) {return chooseColorClass(d.battery);})
                     .style("opacity", 0.6); // opacity of circle
-                map.append("text")
-                    .attr("x", function(d, i) { return x(xdata[i]); })
-                    .attr("y", function(d) { return y(d) + 4; })
+				g.selectAll(".scatter-dots text")
+                    .data(members, function(d) { return d.name; })
+                    .attr("x", function(d) { return x(d.lon); })
+                    .attr("y", function(d) { return y(d.lat) + 4; })
                     .attr("text-anchor", "middle")
-                    .text(function(d, i) {return names[i];})
+                    .text(function(d) {return d.name;})
                     .attr("class", "dot-id");
 
-//                home.cursor = g.append("svg:circle");
-//
-//                home.cursor.attr("cx", x(lon))
-//                    .attr("cy", y(lat))
-//                    .attr("r", 5)
-//                    .attr("class", "myself");
+				if (position) {
+					home.cursor.attr("cx", x(position.lon))
+						.attr("cy", y(position.lat))
+						.attr("r", 5)
+						.attr("class", "myself");
+				}
             };
         });
 
@@ -578,10 +598,29 @@ var mapMargin = 0.1;
         });
     }]);
 
-    seagrass.controller("MapController", ['$scope', 'MapService', 'CachedService', function ($scope, MapService, CachedService) {
+    seagrass.controller("MapController", ['$scope', 'MapService', 'NavigationService', 'CachedService', function ($scope, MapService, NavigationService, CachedService, DataService) {
+		MapService.prepareMap();
+
+		$scope.members = [];
+		$scope.position = undefined;
+		$scope.$watch('members', function() {
+			MapService.drawMap($scope.members, $scope.position);
+		});
+		$scope.$watch('position', function() {
+			MapService.drawMap($scope.members, $scope.position);
+		});
+
+		var watch = NavigationService.watchPosition(function(position) {
+			$scope.position = position;
+			$scope.$digest();
+		});
         CachedService.getMembers(function(data) {
-            MapService.drawMap(data);
+            $scope.members = data;
         });
+
+		$scope.$on('$destroy', function() {
+			NavigationService.stopWatchingPosition(watch);
+		});
     }]);
 
     seagrass.controller("ErrorController", ['$scope', '$log', 'ErrorService', function($scope, $log, ErrorService) {
