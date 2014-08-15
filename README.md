@@ -31,16 +31,13 @@ To run from CL:
 
 ## TODO
 
- * GPS for showing current location (http://docs.phonegap.com/en/2.0.0/cordova_geolocation_geolocation.md.html)
  * extra circle for selected member on the map
- * structure the project
  * Change range for battery to 10-15 (right now 0-15) ?
- * Make data tables nicer (like in twitter bootstrap)
- * Configurable ordering in data tables (!)
  * set parameters for current pattern (GET /pattern/current)
- * History graphs can be smaller at startup
- * set image for the app
+ * Configurable ordering in data tables
  * history should not be refreshed on backend url change but marked as needed to be refreshed
+ * Make data tables nicer (like in twitter bootstrap)
+ * structure the project
 
  ## Problems
 

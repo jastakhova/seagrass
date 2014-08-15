@@ -1,5 +1,4 @@
 var staticBackends = ["http://192.168.1.101:8080", "http://10.0.1.53:8080", "http://localhost:8080", "http://thawing-hamlet-4746.herokuapp.com"];
-var batteryThreshold = 7;
 
 var speedMin = 0;
 var speedMax = 255;
