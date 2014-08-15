@@ -1,8 +1,5 @@
 var staticBackends = ["http://192.168.1.101:8080", "http://10.0.1.53:8080", "http://localhost:8080", "http://thawing-hamlet-4746.herokuapp.com"];
-var patternRange = 30;
 var batteryThreshold = 7;
-
-var defaultPattern = 0;
 
 var speedMin = 0;
 var speedMax = 255;
@@ -20,7 +17,7 @@ var historyDataPeriod = 360;
 var historyXTicks = historyDataPeriod / 60;
 var historyCPURange = 100;
 var historyMemoryRange = 100;
-var historyBatteryRange = 100;
+var historyBatteryRange = 15;
 
 var mapMargin = 0.1;
 
@@ -151,6 +148,7 @@ var mapMargin = 0.1;
             this.sensor = "";
             this.sensors = [];
             this.members = [];
+            this.patterns = [];
 
             this.get = function() {
                 return this.sensor;
@@ -188,9 +186,22 @@ var mapMargin = 0.1;
                 }
             }
 
+            this.getPatterns = function(callback) {
+                if (home.patterns.length === 0)
+                {
+                    LastUpdateService.get(BackendService.getBackend() + '/pattern/names', function(data) {
+                        callback(data);
+                        home.patterns = data;
+                    }, "patterns");
+                } else {
+                    callback(home.patterns);
+                }
+            }
+
             this.clear = function() {
                 home.members = [];
                 home.sensors = [];
+                home.patterns = [];
             }
 
             this.batteryFilter = function (member) {
@@ -237,11 +248,12 @@ var mapMargin = 0.1;
                         return y(d);
                     });
 
-                if (!home.graph[metric]) {
+                if (d3.select("#" + metric + "svg").empty()) {
                     // Add an SVG element with the desired dimensions and margin.
                     var graph = d3.select("#" + metric + "Graph").append("svg:svg")
                         .attr("width", w + m[1] + m[3])
                         .attr("height", h + m[0] + m[2])
+                        .attr("id", metric + "svg")
                         .append("svg:g")
                         .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
@@ -411,8 +423,14 @@ var mapMargin = 0.1;
 
         $scope.members = [];
 
-        CachedService.getMembers(function(data) {
-            $scope.members = data;
+        CachedService.getMembers(function(members) {
+
+            CachedService.getPatterns(function(patterns) {
+                $scope.members = members.map(function(member) {
+                    member.pattern = patterns[member.pattern];
+                    return member;
+                });
+            });
         });
 
         var id = "members";
@@ -472,18 +490,19 @@ var mapMargin = 0.1;
                         $scope.entries.push(entry);
                     }
 
-                    if (data[0].length < historyDataPeriod)
-                    {
-                        var initialLength = data[0].length;
-                        for (var i = 0; i < historyDataPeriod - initialLength; i++)
-                        {
-                            data[0].push(Math.floor((Math.random() * 100) + 1));
-                        }
-                    }
+                    // generation of random data so that the history graph would have all 6h set
+//                    if (data[0].length < historyDataPeriod)
+//                    {
+//                        var initialLength = data[0].length;
+//                        for (var i = 0; i < historyDataPeriod - initialLength; i++)
+//                        {
+//                            data[0].push(Math.floor((Math.random() * 100) + 1));
+//                        }
+//                    }
 
                     GraphService.drawGraph(data[0], historyCPURange, "cpu");
-                    GraphService.drawGraph(data[0], historyCPURange, "memory");
-                    GraphService.drawGraph(data[0], historyCPURange, "battery");
+                    GraphService.drawGraph(data[1], historyMemoryRange, "memory");
+                    GraphService.drawGraph(data[2], historyBatteryRange, "battery");
                 });
         };
 
@@ -543,10 +562,10 @@ var mapMargin = 0.1;
         };
     }]);
 
-    seagrass.controller("PatternController", ['$scope', '$http', '$log', 'HttpService', function ($scope, $http, $log, HttpService) {
-        $scope.patterns = Array.apply(null, Array(patternRange)).map(function (_, i) {return i;});
-
-        $scope.chosen_pattern = defaultPattern;
+    seagrass.controller("PatternController", ['$scope', '$http', '$log', 'HttpService', 'CachedService', function ($scope, $http, $log, HttpService, CachedService) {
+        CachedService.getPatterns(function(data) {
+            $scope.patterns = Object.keys(data).map(function(key) {return {id:key, name:data[key]};});
+        });
 
         $scope.speed = speedDefault;
         $scope.speedMin = speedMin;
@@ -565,7 +584,7 @@ var mapMargin = 0.1;
         $scope.blue = 0;
 
         $scope.submit = function() {
-            HttpService.put('/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
+            HttpService.put('/pattern/' + $scope.chosen_pattern.id + '?intensity=' + $scope.intensity +
                 '&red=' + $scope.red + '&green=' + $scope.green + '&blue=' + $scope.blue +
                 '&speed=' + $scope.speed + '&modDelay=' + $scope.modDelay);
         };

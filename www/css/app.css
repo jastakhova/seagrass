@@ -7,7 +7,15 @@
 }
 
 .long-range {
-    width: 270px;
+    width: 210px;
+}
+
+input[type=range] {
+    margin: 7px;
+}
+
+span {
+    font-size: 12px;
 }
 
 /*d3 CSS for history graphs*/

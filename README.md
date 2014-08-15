@@ -34,10 +34,8 @@ To run from CL:
  * GPS for showing current location (http://docs.phonegap.com/en/2.0.0/cordova_geolocation_geolocation.md.html)
  * extra circle for selected member on the map
  * structure the project
- * Change ranges: cpu/memory 0-100, battery 10-15. Show the exact number to the right
- * Use pattern names from GET /pattern/names when it's ready, sort patterns in alphabetical order
- * Make data tables nicer (like in twitter bootstrap). 3 first letters in pattern name
- * Center range inputs in pattern page
+ * Change range for battery to 10-15 (right now 0-15) ?
+ * Make data tables nicer (like in twitter bootstrap)
  * Configurable ordering in data tables (!)
  * set parameters for current pattern (GET /pattern/current)
  * History graphs can be smaller at startup
@@ -47,9 +45,7 @@ To run from CL:
  ## Problems
 
  * Sensor PUT/POST still returns 405, as only OPTIONS is allowed
- * history graphs use generated data for missed time (right now I have 4 real points from 360 expected). Mock data generation should be removed
  * for sensor-1 only 1 range is showing
- * after refresh and clicking control history graphs were not showing
  * Control requests (PUT, POST) doesn't work in browser (because of not configured CORS headers at backend), but seem to work in the emulator
 
  ## Auxiliary. Gradient map
