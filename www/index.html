@@ -220,23 +220,23 @@
                 </div>
                 <ons-list>
                     <ons-list-item>
-                        Speed: <input ng-model="speed" min="{{speedMin}}" max="{{speedMax}}" type="range" class="range">
+                        Speed: <input ng-model="speed" min="{{speedMin}}" max="{{speedMax}}" type="range" class="range"> <span>{{speed}}</span>
                     </ons-list-item>
                     <ons-list-item>
-                        Intensity: <input ng-model="intensity" min="{{intensityMin}}" max="{{intensityMax}}" type="range" class="range">
+                        Intensity: <input ng-model="intensity" min="{{intensityMin}}" max="{{intensityMax}}" type="range" class="range"> <span>{{intensity}}</span>
                     </ons-list-item>
                     <ons-list-item>
-                        modDelay: <input ng-model="modDelay" min="{{modDelayMin}}" max="{{modDelayMax}}" type="range" class="range">
+                        modDelay: <input ng-model="modDelay" min="{{modDelayMin}}" max="{{modDelayMax}}" type="range" class="range"> <span>{{modDelay}}</span>
                     </ons-list-item>
                     <ons-list-item>
-                        Red: <input ng-model="red" min="0" max="255" type="range" class="range long-range">
+                        Red: <input ng-model="red" min="0" max="255" type="range" class="range long-range"> <span>{{red}}</span>
                     </ons-list-item>
                     <ons-list-item>
-                        Green: <input ng-model="green" min="0" max="255" type="range" class="range long-range">
+                        Green: <input ng-model="green" min="0" max="255" type="range" class="range long-range"> <span>{{green}}</span>
                     </ons-list-item>
-                    <div class="margined">
-                        Blue: <input ng-model="blue" min="0" max="255" type="range" class="range long-range">
-                    </div>
+                    <ons-list-item>
+                        Blue: <input ng-model="blue" min="0" max="255" type="range" class="range long-range"> <span>{{blue}}</span>
+                    </ons-list-item>
                 </ons-list>
                 <button class="button" ng-click="submit()">Submit</button>
             </div>
@@ -250,15 +250,15 @@
                 <div class="center">"{{chosen_sensor}}"</div>
             </ons-toolbar>
             <div class="margined">
-                <div class="margined" ng-show="filterLength > 0">
-                    Filter Length: <input ng-model="filterLength" min="1" max="255" type="range" class="range long-range">
-                </div>
                 <ons-list>
+                    <ons-list-item ng-show="filterLength > 0">
+                        Filter Length: <input ng-model="filterLength" min="1" max="255" type="range" class="range long-range"> <span>{{filterLength}}</span>
+                    </ons-list-item>
                     <ons-list-item ng-show="threshold > 0">
-                        Threshold: <input ng-model="threshold" min="1" max="255" type="range" class="range long-range">
+                        Threshold: <input ng-model="threshold" min="1" max="255" type="range" class="range long-range"> <span>{{threshold}}</span>
                     </ons-list-item>
                     <ons-list-item>
-                        Throttle: <input ng-model="throttle" min="0" max="1000" type="range" class="range long-range">
+                        Throttle: <input ng-model="throttle" min="0" max="1000" type="range" class="range"> <span>{{throttle}}</span>
                     </ons-list-item>
                 </ons-list>
                 <button class="button margined" ng-click="submit()">Submit</button>
