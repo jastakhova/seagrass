@@ -113,6 +113,7 @@
                             <strong class="margined"><ons-row><ons-col></ons-col>
                                 <ons-col>Threshold</ons-col>
                                 <ons-col>Filter length</ons-col>
+                                <ons-col>Throttle</ons-col>
                             </ons-row></strong>
                             <ons-scroller>
                             <div ng-repeat="sensor in sensors">
@@ -120,6 +121,7 @@
                                     <ons-col><strong>{{sensor.name}}</strong></ons-col>
                                     <ons-col><div style="text-align: center">{{sensor.threshold}}</div></ons-col>
                                     <ons-col>{{sensor.filterLength}}</ons-col>
+                                    <ons-col>{{sensor.throttle}}</ons-col>
                                 </ons-row>
                             </div>
                             </ons-scroller>
