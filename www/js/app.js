@@ -235,11 +235,12 @@ var mapMargin = 0.1;
                         return y(d);
                     });
 
-                if (!home.graph[metric]) {
+                if (d3.select("#" + metric + "svg").empty()) {
                     // Add an SVG element with the desired dimensions and margin.
                     var graph = d3.select("#" + metric + "Graph").append("svg:svg")
                         .attr("width", w + m[1] + m[3])
                         .attr("height", h + m[0] + m[2])
+                        .attr("id", metric + "svg")
                         .append("svg:g")
                         .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
