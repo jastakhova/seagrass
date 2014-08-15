@@ -218,7 +218,7 @@
             <ons-scroller>
             <div ng-controller="PatternController" class="margined">
                 <div class="margined">
-                Pattern: <select ng-model="chosen_pattern" ng-options="pattern as pattern for pattern in patterns"></select>
+                Pattern: <select ng-model="chosen_pattern" ng-options="pattern.name for pattern in patterns | orderBy:'name'"></select>
                 </div>
                 <ons-list>
                     <ons-list-item>

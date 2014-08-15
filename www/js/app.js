@@ -1,8 +1,5 @@
 var staticBackends = ["http://192.168.1.101:8080", "http://10.0.1.53:8080", "http://localhost:8080", "http://thawing-hamlet-4746.herokuapp.com"];
-var patternRange = 30;
 var batteryThreshold = 7;
-
-var defaultPattern = 0;
 
 var speedMin = 0;
 var speedMax = 255;
@@ -545,10 +542,10 @@ var mapMargin = 0.1;
         };
     }]);
 
-    seagrass.controller("PatternController", ['$scope', '$http', '$log', 'HttpService', function ($scope, $http, $log, HttpService) {
-        $scope.patterns = Array.apply(null, Array(patternRange)).map(function (_, i) {return i;});
-
-        $scope.chosen_pattern = defaultPattern;
+    seagrass.controller("PatternController", ['$scope', '$http', '$log', 'HttpService', 'CachedService', function ($scope, $http, $log, HttpService, CachedService) {
+        CachedService.getPatterns(function(data) {
+            $scope.patterns = Object.keys(data).map(function(key) {return {id:key, name:data[key]};});
+        });
 
         $scope.speed = speedDefault;
         $scope.speedMin = speedMin;
@@ -567,7 +564,7 @@ var mapMargin = 0.1;
         $scope.blue = 0;
 
         $scope.submit = function() {
-            HttpService.put('/pattern/' + $scope.chosen_pattern + '?intensity=' + $scope.intensity +
+            HttpService.put('/pattern/' + $scope.chosen_pattern.id + '?intensity=' + $scope.intensity +
                 '&red=' + $scope.red + '&green=' + $scope.green + '&blue=' + $scope.blue +
                 '&speed=' + $scope.speed + '&modDelay=' + $scope.modDelay);
         };
