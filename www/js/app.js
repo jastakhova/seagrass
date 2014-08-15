@@ -453,14 +453,15 @@ var mapMargin = 0.1;
                         $scope.entries.push(entry);
                     }
 
-                    if (data[0].length < historyDataPeriod)
-                    {
-                        var initialLength = data[0].length;
-                        for (var i = 0; i < historyDataPeriod - initialLength; i++)
-                        {
-                            data[0].push(Math.floor((Math.random() * 100) + 1));
-                        }
-                    }
+                    // generation of random data so that the history graph would have all 6h set
+//                    if (data[0].length < historyDataPeriod)
+//                    {
+//                        var initialLength = data[0].length;
+//                        for (var i = 0; i < historyDataPeriod - initialLength; i++)
+//                        {
+//                            data[0].push(Math.floor((Math.random() * 100) + 1));
+//                        }
+//                    }
 
                     GraphService.drawGraph(data[0], historyCPURange, "cpu");
                     GraphService.drawGraph(data[0], historyCPURange, "memory");

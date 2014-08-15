@@ -46,7 +46,6 @@ To run from CL:
  ## Problems
 
  * Sensor PUT/POST still returns 405, as only OPTIONS is allowed
- * history graphs use generated data for missed time (right now I have 4 real points from 360 expected). Mock data generation should be removed
  * for sensor-1 only 1 range is showing
  * Control requests (PUT, POST) doesn't work in browser (because of not configured CORS headers at backend), but seem to work in the emulator
 
