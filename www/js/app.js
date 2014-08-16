@@ -48,6 +48,19 @@ var mapMargin = 0.1;
             this.formatDate = function(date) {
                 return date.getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
             };
+
+            var gradient = [6.2, 6.8, 7.0, 7.05, 7.1, 7.15, 7.4, 7.6, 7.8, 8.0];
+            var colors = ["rgb(165, 0, 38)", "rgb(215,48,39)", "rgb(244,109,67)", "rgb(253,174,97)", "rgb(254,224,139)",
+                "rgb(255,255,191)", "rgb(217,239,139)", "rgb(166,217,106)", "rgb(102,189,99)", "rgb(26,152,80)", "rgb(0,104,55)"];
+
+            this.chooseColorClass = function(battery) {
+                for (var i = 0; i < gradient.length; i++) {
+                    if (battery < gradient[i]) {
+                        return colors[i];
+                    }
+                }
+                return colors[gradient.length];
+            };
         }).
         service('ErrorService', function($http) {
            var home = this;
@@ -311,7 +324,7 @@ var mapMargin = 0.1;
 			this.stopWatchingPosition = function(watchId) {
 				navigator.geolocation.clearWatch(watchId);	
 			};
-  		}).service('MapService', function($log) {
+  		}).service('MapService', function($log, Util) {
             var home = this;
 
             this.selectedMember = undefined;
@@ -352,17 +365,6 @@ var mapMargin = 0.1;
                 var xdata = members.map(function(member) {return member.lon;}),
                     ydata = members.map(function(member) {return member.lat;});
 
-                var gradient = [6.2, 6.8, 7.0, 7.05, 7.1, 7.15, 7.4, 7.6, 7.8, 8.0];
-
-                var chooseColorClass = function(battery) {
-                    for (var i = 0; i < gradient.length; i++) {
-                        if (battery < gradient[i]) {
-                            return "color" + (i + 1);
-                        }
-                    }
-                    return "color" + (gradient.length + 1);
-                };
-
                 // x and y scales, I've used linear here but there are other options
                 // the scales translate data values to pixel values for you
                 var xMin = d3.min(xdata);
@@ -392,7 +394,7 @@ var mapMargin = 0.1;
                     .attr("cx", function (d) { return x(d.lon); } )
                     .attr("cy", function (d) { return y(d.lat); } )
                     .attr("r", 10) // radius of circle
-                    .attr("class", function(d) {return chooseColorClass(d.battery);})
+                    .style("fill", function(d) {return Util.chooseColorClass(d.battery);})
                     .attr("stroke", "black")
                     .attr("stroke-width", function(d) {return d.name === home.selectedMember ? 3 : 0;})
                     .style("opacity", 0.6); // opacity of circle
@@ -425,8 +427,8 @@ var mapMargin = 0.1;
         };
     }]);
 
-    seagrass.controller("MembersController", ['$scope', '$http', '$log', 'CachedService', 'LastUpdateService', 'MapService',
-        function ($scope, $http, $log, CachedService, LastUpdateService, MapService) {
+    seagrass.controller("MembersController", ['$scope', '$http', '$log', 'CachedService', 'LastUpdateService', 'MapService', 'Util',
+        function ($scope, $http, $log, CachedService, LastUpdateService, MapService, Util) {
         $scope.batteryFilter = CachedService.batteryFilter;
 
         $scope.members = [];
@@ -456,6 +458,10 @@ var mapMargin = 0.1;
         $scope.drawMapWithSelectedMember = function(navigator, page, memberName) {
             MapService.setSelectedMember(memberName);
             navigator.pushPage(page, { animation : 'slide' } );
+        };
+
+        $scope.chooseColorClass = function(battery) {
+           return Util.chooseColorClass(battery);
         };
     }]);
 

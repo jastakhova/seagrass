@@ -31,7 +31,6 @@ To run from CL:
 
 ## TODO
 
- * coloring for battery in the data table
  * set parameters for current pattern (GET /pattern/current)
  * Configurable ordering in data tables
  * history should not be refreshed on backend url change but marked as needed to be refreshed
