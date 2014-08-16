@@ -31,8 +31,7 @@ To run from CL:
 
 ## TODO
 
- * extra circle for selected member on the map
- * Change range for battery to 10-15 (right now 0-15) ?
+ * coloring for battery in the data table
  * set parameters for current pattern (GET /pattern/current)
  * Configurable ordering in data tables
  * history should not be refreshed on backend url change but marked as needed to be refreshed

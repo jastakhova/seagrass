@@ -314,6 +314,12 @@ var mapMargin = 0.1;
   		}).service('MapService', function($log) {
             var home = this;
 
+            this.selectedMember = undefined;
+
+            this.setSelectedMember = function(member) {
+              home.selectedMember = member;
+            };
+
 			// size and margins for the chart
 			var margin = {top: 20, right: 20, bottom: 20, left: 20}
 				, width = 300 - margin.left - margin.right
@@ -387,6 +393,8 @@ var mapMargin = 0.1;
                     .attr("cy", function (d) { return y(d.lat); } )
                     .attr("r", 10) // radius of circle
                     .attr("class", function(d) {return chooseColorClass(d.battery);})
+                    .attr("stroke", "black")
+                    .attr("stroke-width", function(d) {return d.name === home.selectedMember ? 3 : 0;})
                     .style("opacity", 0.6); // opacity of circle
 				g.selectAll(".scatter-dots text")
                     .data(members, function(d) { return d.name; })
@@ -417,7 +425,8 @@ var mapMargin = 0.1;
         };
     }]);
 
-    seagrass.controller("MembersController", ['$scope', '$http', '$log', 'CachedService', 'LastUpdateService', function ($scope, $http, $log, CachedService, LastUpdateService) {
+    seagrass.controller("MembersController", ['$scope', '$http', '$log', 'CachedService', 'LastUpdateService', 'MapService',
+        function ($scope, $http, $log, CachedService, LastUpdateService, MapService) {
         $scope.batteryFilter = CachedService.batteryFilter;
 
         $scope.members = [];
@@ -442,6 +451,11 @@ var mapMargin = 0.1;
 
         $scope.refresh = function() {
            LastUpdateService.refresh(id);
+        };
+
+        $scope.drawMapWithSelectedMember = function(navigator, page, memberName) {
+            MapService.setSelectedMember(memberName);
+            navigator.pushPage(page, { animation : 'slide' } );
         };
     }]);
 
@@ -639,6 +653,10 @@ var mapMargin = 0.1;
 		$scope.$on('$destroy', function() {
 			NavigationService.stopWatchingPosition(watch);
 		});
+
+        $scope.cleanSelection = function() {
+          MapService.setSelectedMember(undefined);
+        };
     }]);
 
     seagrass.controller("ErrorController", ['$scope', '$log', 'ErrorService', function($scope, $log, ErrorService) {
