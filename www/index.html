@@ -62,6 +62,14 @@
                             </ons-col>
                         </ons-row>
 
+                        <ons-list>
+                            <ons-list-item modifier="chevron" ng-click="membersNavigator.pushPage('map.html', { animation : 'slide' } )">
+                                <ons-row>
+                                    <ons-col class="left">Show map</ons-col>
+                                </ons-row>
+                            </ons-list-item>
+                        </ons-list>
+
                         <div style="font-size: 12px" ng-show="members.length > 0">
                            <strong class="margined"><ons-row>
                                <ons-col></ons-col>
@@ -89,15 +97,6 @@
                             </div>
                             </ons-scroller>
                         </div>
-                        <br/>
-
-                        <ons-list>
-                            <ons-list-item modifier="chevron" ng-click="membersNavigator.pushPage('map.html', { animation : 'slide' } )">
-                                <ons-row>
-                                    <ons-col class="left">Show map</ons-col>
-                                </ons-row>
-                            </ons-list-item>
-                        </ons-list>
                     </div>
                 </div>
 
