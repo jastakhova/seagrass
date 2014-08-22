@@ -31,17 +31,7 @@ To run from CL:
 
 ## TODO
 
- * set parameters for current pattern (GET /pattern/current)
  * Configurable ordering in data tables
- * history should not be refreshed on backend url change but marked as needed to be refreshed
- * Make data tables nicer (like in twitter bootstrap)
- * structure the project
-
- ## Problems
-
- * Sensor PUT/POST still returns 405, as only OPTIONS is allowed
- * for sensor-1 only 1 range is showing
- * Control requests (PUT, POST) doesn't work in browser (because of not configured CORS headers at backend), but seem to work in the emulator
 
  ## Auxiliary. Gradient map
 

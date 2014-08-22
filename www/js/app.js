@@ -581,10 +581,32 @@ var mapMargin = 0.1;
         };
     }]);
 
-    seagrass.controller("PatternController", ['$scope', '$http', '$log', 'HttpService', 'CachedService', function ($scope, $http, $log, HttpService, CachedService) {
-        CachedService.getPatterns(function(data) {
-            $scope.patterns = Object.keys(data).map(function(key) {return {id:key, name:data[key]};});
-        });
+    seagrass.controller("PatternController", ['$scope', '$http', '$log', 'HttpService', 'CachedService', 'LastUpdateService', 'BackendService',
+        function ($scope, $http, $log, HttpService, CachedService, LastUpdateService, BackendService) {
+
+        var findPattern = function(label, patterns) {
+            return patterns.filter(function(pattern) {
+                return pattern.id === label || pattern.name === label;
+            })[0];
+        };
+
+        LastUpdateService.get(BackendService.getBackend() + '/pattern/current', function(data) {
+            $scope.currentPattern = data;
+
+            CachedService.getPatterns(function(data) {
+                $scope.patterns = Object.keys(data).map(function(key) {return {id:key, name:data[key]};});
+
+                $scope.chosen_pattern = findPattern($scope.currentPattern.name, $scope.patterns);
+
+                $scope.speed = $scope.currentPattern.speed;
+                $scope.intensity = $scope.currentPattern.intensity;
+                $scope.modDelay = $scope.currentPattern.modDelay;
+
+                $scope.red = $scope.currentPattern.red;
+                $scope.green = $scope.currentPattern.green;
+                $scope.blue = $scope.currentPattern.blue;
+            });
+        }, "currentPattern");
 
         $scope.speed = speedDefault;
         $scope.speedMin = speedMin;
