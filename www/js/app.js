@@ -451,6 +451,9 @@ var mapMargin = 0.1;
 
         $scope.lastUpdated = LastUpdateService.getLastUpdated(id);
 
+        $scope.ordering = "name";
+        $scope.reverse = false;
+
         $scope.refresh = function() {
            LastUpdateService.refresh(id);
         };

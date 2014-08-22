@@ -29,10 +29,6 @@ To run from CL:
 ![Emulator history graphs view](https://github.com/jastakhova/seagrass/blob/master/img/2014-08-07_2349.png "History graphs screen")
 
 
-## TODO
-
- * Configurable ordering in data tables
-
  ## Auxiliary. Gradient map
 
   if (currentVoltage < 6.2) {

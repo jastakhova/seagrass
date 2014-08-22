@@ -72,18 +72,18 @@
 
                         <div style="font-size: 12px" ng-show="members.length > 0">
                            <strong class="margined"><ons-row>
-                               <ons-col></ons-col>
-                               <ons-col>Pattern</ons-col>
-                               <ons-col>Battery</ons-col>
-                               <ons-col>HBeat</ons-col>
-                               <ons-col>Lat</ons-col>
-                               <ons-col>Lon</ons-col>
+                               <ons-col ng-click="ordering = 'name'; reverse = !reverse"><a>Name</a></ons-col>
+                               <ons-col ng-click="ordering = 'pattern'; reverse = !reverse"><a>Pattern</a></ons-col>
+                               <ons-col ng-click="ordering = 'battery'; reverse = !reverse"><a>Battery</a></ons-col>
+                               <ons-col ng-click="ordering = 'heartbeatAge'; reverse = !reverse"><a>HBeat</a></ons-col>
+                               <ons-col ng-click="ordering = 'lat'; reverse = !reverse"><a>Lat</a></ons-col>
+                               <ons-col ng-click="ordering = 'lon'; reverse = !reverse"><a>Lon</a></ons-col>
                            </ons-row></strong>
                             <ons-scroller>
-                            <div ng-repeat="member in members | orderBy:'name'">
+                            <div ng-repeat="member in members | orderBy:ordering:reverse">
                                 <ons-row>
                                     <ons-col ng-click="drawMapWithSelectedMember(membersNavigator, 'map.html', member.name)">
-                                        <strong>{{member.name}}</strong>
+                                        <strong><a>{{member.name}}</a></strong>
                                     </ons-col>
                                     <ons-col>{{member.pattern | limitTo : 3}}</ons-col>
                                     <ons-col>
